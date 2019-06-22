@@ -17,6 +17,23 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "dynamic-form": [
+        "dist/dynamic-form"
+      ],
+      "dynamic-form/*": [
+        "dist/dynamic-form/*"
+      ],
+      "dynamic-listing": [
+        "dist/dynamic-listing"
+      ],
+      "dynamic-listing/*": [
+        "dist/dynamic-listing/*"
+      ],
+      "jszip": [
+        "node_modules/jszip/dist/jszip.min.js"
+      ]
+    }
   }
 }

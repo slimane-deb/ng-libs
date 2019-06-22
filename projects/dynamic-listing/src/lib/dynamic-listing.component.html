@@ -1,0 +1,27 @@
+<dx-data-grid
+  [dataSource]="datas"
+  [allowColumnResizing]="columnResize"
+  [hoverStateEnabled]="true"
+  [showBorders]="true"
+  id="DynamicDataGrid"
+  (onCellClick)="cellClicked($event)"
+>
+
+  <dxo-pager [showPageSizeSelector]="true" [showInfo]="true" ></dxo-pager>
+  <dxo-filter-row [visible]="searchRow" ></dxo-filter-row>
+  <dxo-search-panel [visible]="globalSearch" ></dxo-search-panel>
+
+  <dxi-column
+    *ngFor="let item of itemsField; let i=index" 
+    [dataField]="item.value"
+    [caption]="item.label"
+    [filterOperations]="['contains', '=']" 
+    [width] = "item.width"
+    [cellTemplate] = "item.href? template : null"
+  >
+  </dxi-column>
+  <div *dxTemplate="let cell of 'cellTemplate'">
+    <div style="color:blue; cursor: pointer; text-decoration: underline;">{{cell.text}}</div>
+  </div>
+
+</dx-data-grid>

@@ -1,0 +1,27 @@
+:host {
+    height: 100%;
+}
+
+#DynamicDataGrid {
+    height: 100%;
+}
+
+::ng-deep .dx-datagrid-rowsview .dx-datagrid-content tr:nth-child(2n) {
+    background-color: #ddecfa;
+}
+
+::ng-deep .dx-datagrid-rowsview .dx-datagrid-content tr:nth-child(2n+1) {
+   
+}
+
+::ng-deep .dx-datagrid-rowsview .dx-datagrid-content tr:nth-last-child(1) {
+    background-color: #fff;
+}
+
+::ng-deep .dx-pages .dx-page.dx-selection:nth-child(2n) {
+    background-color: #ddecfa;
+}
+
+::ng-deep .dx-page-sizes .dx-page-size.dx-selection:nth-child(2n) {
+    background-color: #ddecfa;
+}
