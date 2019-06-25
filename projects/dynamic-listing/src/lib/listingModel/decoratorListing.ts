@@ -46,6 +46,7 @@ export function ListingHeader(header : ListingHeader) {
     if (header.resizeColomns == undefined) header.resizeColomns = false;
     if (header.searchRow == undefined) header.searchRow = false;
     if (header.url == undefined) header.url = null;
+    if (header.editButton == undefined) header.editButton = null;
 
     return function(target : any) {
         target.prototype.headers = header;

@@ -29,7 +29,8 @@ export class Test {
         // datas : new URL("http://dummy.restapiexample.com/api/v1/employees"),
         // valueTextUrl : {valueKey : "id", textKey : "employee_name"},
         required : true,
-        multiple : true
+        multiple : false,
+        defaultValue : 2
     })
     name;
 

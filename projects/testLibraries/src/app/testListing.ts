@@ -7,6 +7,7 @@ import { ListingHeader, ListingDeco } from 'projects/dynamic-listing/src/public-
   searchRow : true,
   resizeColomns : true,
   globalSearch : true,
+  editButton : "Edit"
 })
 export class TestListing {
 
@@ -51,7 +52,8 @@ export class TestListing {
   situation;
 
   @ListingDeco({
-    label : 'Charger du dossier'
+    label : 'Charger du dossier',
+    value : "personne->nom"
   })
   personne;
 }

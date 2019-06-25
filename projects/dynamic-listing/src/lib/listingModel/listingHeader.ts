@@ -3,5 +3,6 @@ export interface ListingHeader {
     url? : URL,
     globalSearch? : boolean,
     resizeColomns? : boolean,
-    searchRow?  : boolean
+    searchRow?  : boolean,
+    editButton? : string
 }

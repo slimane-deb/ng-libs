@@ -1,11 +1,12 @@
 {
   "name": "dynamic-listing",
   "version": "1.2.0",
-  "author" :"adnane GUETTAF @ENAGEO",
+  "author": "adnane GUETTAF @ENAGEO",
   "peerDependencies": {
     "@angular/common": "^7.2.0",
     "@angular/core": "^7.2.0",
     "devextreme": "^18.2.7",
     "devextreme-angular": "^18.2.7"
-  }
+  },
+  "dependencies": {}
 }

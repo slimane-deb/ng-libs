@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DxDataGridModule, DxTemplateModule } from 'devextreme-angular';
+import { DxDataGridModule, DxTemplateModule, DxButtonModule, DxPopupModule, DxFormModule, DxSelectBoxModule, DxTextAreaModule, DxRadioGroupModule, DxTextBoxModule, DxDateBoxModule, DxTagBoxModule, DxNumberBoxModule, DxValidatorModule, DxValidationGroupModule, DxCheckBoxModule } from 'devextreme-angular';
 import { DynamicListingComponent } from './dynamic-listing.component';
 import { DynamicListingService } from './dynamic-listing.service';
 
@@ -9,7 +9,20 @@ import { DynamicListingService } from './dynamic-listing.service';
   imports: [
     CommonModule,
     DxDataGridModule,
-    DxTemplateModule
+    DxTemplateModule,
+    DxButtonModule,
+    DxPopupModule,
+    DxFormModule,
+    DxSelectBoxModule,
+    DxTextAreaModule,
+    DxRadioGroupModule,
+    DxTextBoxModule,
+    DxDateBoxModule,
+    DxTagBoxModule,
+    DxNumberBoxModule,
+    DxValidatorModule,
+    DxValidationGroupModule,
+    DxCheckBoxModule
   ],
   providers : [DynamicListingService],
   exports : [DynamicListingComponent]
