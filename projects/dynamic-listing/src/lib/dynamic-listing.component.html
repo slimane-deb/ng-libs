@@ -1,15 +1,23 @@
 <div style="display: flex; flex-direction: row-reverse; height: auto;" >
-  <dx-button *ngIf = "editButton != null"
+  <dx-button *ngIf = "editButton != null && !inEditMode"
     text="edit"
     (onClick)="globalEdit()"
     style="margin: 5px 10px; margin-left: 5px; text-transform: uppercase"
   >
   </dx-button>
   <dx-button
-  *ngIf = "deleteMode" 
+  *ngIf = "deleteMode && inEditMode" 
     text="Delete"
     [disabled]="!selectedItemKeys.length"
     (onClick)="deleteSelection()"
+    style="margin: 5px 10px; margin-left: 5px; text-transform: uppercase"
+    >
+  </dx-button>
+  <dx-button
+  *ngIf = "inEditMode"
+    text="Save"
+    [disabled]="!elementsUpdated"
+    (onClick)="saveEditingList()"
     style="margin: 5px 10px; margin-left: 5px; text-transform: uppercase"
     >
   </dx-button>
@@ -25,23 +33,22 @@
   (onCellClick)="cellClicked($event)"
   (onSelectionChanged)="selectionChanged($event)"
   (onEditingStart)="editWithPopup($event)"
-  (onRowUpdating)="rowBeenUpdating($event)" 
-  (onRowUpdated)="rowBeenUpdated($event)" 
+  (onInitNewRow)="addWithPopup($event)"
+  (onRowUpdated)="rowBatchBeenUpdated($event)" 
 >
 
   <dxo-pager [showPageSizeSelector]="true" [showInfo]="true" ></dxo-pager>
   <dxo-filter-row [visible]="searchRow" ></dxo-filter-row>
   <dxo-search-panel [visible]="globalSearch" ></dxo-search-panel>
-  <dxo-selection *ngIf="deleteMode" mode="multiple"></dxo-selection>
-  <dxo-editing *ngIf="editableMode!==null && editableMode=='batch'" mode="batch" [allowUpdating]="true" [allowAdding]="true" [allowDeleting]="true" ></dxo-editing>
-  <dxo-editing *ngIf="editableMode!==null && editableMode=='popup'" mode="popup" [allowUpdating]="true" [allowAdding]="true">
+  <dxo-selection *ngIf="deleteMode && inEditMode" mode="multiple"></dxo-selection>
+  <dxo-editing *ngIf="inEditMode && editableMode=='batch'" mode="batch" [allowUpdating]="true" [allowAdding]="addInEditMode" ></dxo-editing>
+  <dxo-editing *ngIf="inEditMode && editableMode=='popup'" mode="popup" [allowUpdating]="true" [allowAdding]="addInEditMode">
     <dxo-popup
       #popup
       title="Edit"
       [showTitle]="true"
-      (onHiding)="popUpBeenHide($event)"
-      (onHidden)="console.log('adnane')"
-    > 
+      [showCloseButton] = false
+       > 
     <dxi-toolbar-item
         widget="dxButton"
         location="after"
@@ -109,10 +116,13 @@
           <dxi-item *ngIf="field.type==Types.DATE" [dataField]="field.label" >
               <dxi-validation-rule *ngIf="field.required==true" type="required" message="please fill this field"></dxi-validation-rule>
             <dx-date-box
-              invalidDateMessage="The date must have the following format: MM/dd/yyyy"
+              invalidDateMessage="The date must have the following format: dd/MM/yyyy"
+              [useMaskBehavior] = true
+              displayFormat="dd/MM/yyyy"
               [(value)]="field.defaultValue"
               [width]="200"
               [disabled]="field.disabled"
+              type="date"
             >
             <dx-validator validationGroup="formGroup" >
               <dxi-validation-rule *ngIf="field.required==true" type="required" message="please fill this field"></dxi-validation-rule>

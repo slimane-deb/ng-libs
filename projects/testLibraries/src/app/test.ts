@@ -48,7 +48,7 @@ export class Test {
     @FormDeco({
         label : "adadada",
         type : FormTypes.DATE,
-        defaultValue: new Date(),
+        defaultValue: "06/23/2019",
         required : true,
     })
     name1;

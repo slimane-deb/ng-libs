@@ -25,7 +25,7 @@ export class FormListing {
 
     @FormDeco({
         label : "DATE CREATION",
-        type : FormTypes.INPUT
+        type : FormTypes.DATE
     })
     dateCreation;
     
@@ -51,7 +51,7 @@ export class FormListing {
     @FormDeco({
         label : "Chargé du dossier",
         type : FormTypes.SELECT,
-        datas : [{value : 0, text : "adnane"},{value : 1, text : "allaa"},{value : 22, text : "BENSEDDIK"}]
+        datas : [{value : 0, text : "adnane"},{value : 1, text : "allaa"},{value : 22, text : "BENSEDDIK"},{value : 32, text : "BRIDJI"},{value : 4, text : "KHELLAL"}]
     })
     chargeDossier;
 

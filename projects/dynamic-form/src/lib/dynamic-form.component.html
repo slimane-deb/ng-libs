@@ -46,7 +46,9 @@
           <dxi-item *ngIf="field.type==Types.DATE" [dataField]="field.label" >
               <dxi-validation-rule *ngIf="field.required==true" type="required" message="please fill this field"></dxi-validation-rule>
             <dx-date-box
-              invalidDateMessage="The date must have the following format: MM/dd/yyyy"
+              invalidDateMessage="The date must have the following format: dd/MM/yyyy"
+              [useMaskBehavior] = true
+              displayFormat="dd/MM/yyyy"
               [(value)]="field.defaultValue"
               [width]="200"
               [disabled]="field.disabled"

@@ -128,6 +128,16 @@ setDataToTable() {
             if (attributeAccess[elmt].defaultValue) attributeAccess[elmt].selected = attributeAccess[elmt].datas[attributeAccess[elmt].defaultValue].value;
             else attributeAccess[elmt].selected =0;
           }
+          if (attributeAccess[elmt].type == FormTypes.DATE) {
+            if (typeof(attributeAccess[elmt].defaultValue) !== "string") {
+              let currentDate = new Date();
+              let day = currentDate.getDate()
+              let month = currentDate.getMonth() + 1
+              let year = currentDate.getFullYear();
+              let date = month+"/"+day+"/"+year;
+              attributeAccess[elmt].defaultValue = date;
+            }
+          }
           tabForm.push({...attributeAccess[elmt]});
           j++;
         }

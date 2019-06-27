@@ -38,6 +38,9 @@ export class DynamicListingComponent implements OnInit {
   @Input() deleteMode : boolean = false;
 
   @Input() editableMode : string = null;
+  @Input() inEditMode : boolean = false;
+
+  @Input() addInEditMode : boolean = true;
 
   @Input() formEditClassName : string = null;
 
@@ -53,13 +56,22 @@ export class DynamicListingComponent implements OnInit {
   datasForm : any[] = [];
   @Input() colNumberForm : Number = 2;
   @Input() nameClsFormPopup : string;
+  @Output() onSaveClicked = new EventEmitter<any>();
   Types = FormTypes;
+  indexLastElementClicked = -1;
+  elementsUpdated = false;
 
   constructor(private listingProvider : DynamicListingService) { 
     this.publishTitle = this.publishTitle.bind(this);
     this.parseClass = this.parseClass.bind(this);
     this.parseFormListing = this.parseFormListing.bind(this);
     this.saveFormPopUp = this.saveFormPopUp.bind(this);
+    this.cancelFormPopUp = this.cancelFormPopUp.bind(this);
+    this.putNewDatas = this.putNewDatas.bind(this);
+    this.putNewDatasAdd = this.putNewDatasAdd.bind(this);
+    this.freeFormElements = this.freeFormElements.bind(this);
+    this.getGeneratedListing = this.getGeneratedListing.bind(this);
+    this.saveEditingList = this.saveEditingList.bind(this);
     setTimeout(()=> {
       this.parseClass();
       return this.parseFormListing();
@@ -81,7 +93,7 @@ export class DynamicListingComponent implements OnInit {
       this.globalSearch = attributeAccess.headers.globalSearch;
       this.searchRow = attributeAccess.headers.searchRow;
       this.editButton = attributeAccess.headers.editButton;
-      if (this.editableMode!==null && typeof (this.editableMode) == "string" && (this.editableMode=="batch" || this.editableMode == "popup" )  ) this.editButton = null;
+      // if (this.editableMode!==null && typeof (this.editableMode) == "string" && (this.editableMode=="batch" || this.editableMode == "popup" )  ) this.editButton = null;
       this.columnResize = attributeAccess.headers.resizeColomns;
       keys.splice(idx,1);
       this.publishTitle();
@@ -114,6 +126,7 @@ export class DynamicListingComponent implements OnInit {
   deleteSelection() {
     this.datas = this.datas.filter(elemt => this.selectedItemKeys.indexOf(elemt)<0);
     this.myListing.instance.refresh();
+    this.elementsUpdated = true;
   }
 
   publishTitle() {
@@ -128,8 +141,6 @@ export class DynamicListingComponent implements OnInit {
     this.onRowClicked.emit(ev);
     if (this.itemsField[ev.columnIndex].href)
     this.onHrefClicked.emit(this.generateHrefString(this.itemsField[ev.columnIndex].href,ev.rowIndex));
-    // console.log(this.generateHrefString(this.itemsField[ev.columnIndex].href,ev.rowIndex));
-    // console.log(this.accessNestedObject(this.itemsField[ev.columnIndex].value,ev.rowIndex));
   }
 
 
@@ -151,8 +162,22 @@ export class DynamicListingComponent implements OnInit {
   }
 
 
-  ////// Fo form listing inside popup/////////////////////////////////////////////////////////////////////////////
+  ////// Fo form Editing mode//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
+  globalEdit() {
+    this.inEditMode = true;
+  }
+
+
+  ////// FOr BAtch Edit //////////////////////////////////////////////////////////////////////
+
+  rowBatchBeenUpdated(ev) {
+    if (!this.elementsUpdated) this.elementsUpdated = true;
+  }
+
+
+  /////// For Popup Edit form ///////////////////////////////////////////////////////////////////////////////
   parseFormListing() {
     let  ii = 0; let j=0;
   var classForm = new (<any>this.handlerInstantition)[this.nameClsFormPopup]();
@@ -243,34 +268,88 @@ export class DynamicListingComponent implements OnInit {
         err => console.log(err));
   }
 
-  editWithPopup(ev) {
-    console.log(ev);
-    let idx = this.datas.indexOf(ev.data);
-    let realData = this.extractRealDataRow(ev.data);
-    for (let i =0; i<realData.length; i++) {
+  reajusteForm() {
+    let datas1 = [];
+    this.datasForm.map(elmt => {
+      let obj = {};
+      obj["sectionElements"] = [];
+      elmt.sectionElements.map(elment => obj["sectionElements"].push({...elment}));
+      datas1.push(obj);
+    })
+    this.datasForm.length = 0;
+    this.datasForm = [...datas1];
+  }
+
+  freeFormElements(){
+    for (let i =0; i < this.datasForm[0].sectionElements.length; i++) {
       let elemntForm = this.datasForm[0].sectionElements[i];
       switch(elemntForm.type) {
         case this.Types.INPUT :
-            elemntForm.defaultValue = realData[i];
+            elemntForm.defaultValue = null;
             break;
         case this.Types.TEXTAREA :
-            elemntForm.defaultValue = realData[i];
+            elemntForm.defaultValue = null;
             break;
         case this.Types.NUMBER_PICKER :
-            elemntForm.defaultValue = realData[i];
+            elemntForm.defaultValue = null;
+            break;
+        case this.Types.DATE : 
+            let currentDate = new Date();
+            let day = currentDate.getDate()
+            let month = currentDate.getMonth() + 1
+            let year = currentDate.getFullYear();
+            let date = month+"/"+day+"/"+year;
+            elemntForm.defaultValue = date;
             break;
         case this.Types.RADIO :
-            let j = elemntForm.datas.findIndex(elmt => elmt.text == realData[i]);
-            j > -1 ? elemntForm.selected = elemntForm.datas[j].value : elemntForm.selected = 0;
+            elemntForm.selected = 0;
             break;
         case this.Types.SELECT :
-            let l = elemntForm.datas.findIndex(elmt => elmt.text == realData[i]);
-            l > -1 ? elemntForm.selected = elemntForm.datas[l].value : elemntForm.selected=-1;
+            elemntForm.selected = -1;
+            break;
       }
     }
-    console.log(this.datasForm[0].sectionElements);
-    console.log(realData);
-    console.log(idx);
+  }
+
+  editWithPopup(ev) {
+    this.indexLastElementClicked = this.datas.indexOf(ev.data);
+    if (this.indexLastElementClicked > -1) {
+      let realData = this.extractRealDataRow(ev.data);
+      for (let i =0; i<realData.length; i++) {
+        let elemntForm = this.datasForm[0].sectionElements[i];
+        switch(elemntForm.type) {
+          // c'est fait expré de ne pas avoir regroupé les 3 premier dans le défault, mathesch rohek khchine w tgoule thelebtleh ghlat
+          // lol; je rigole. NON serieux je les ai laissé comme ca pour mieux comprendre c'est tous
+          case this.Types.INPUT :
+              elemntForm.defaultValue = realData[i];
+              break;
+          case this.Types.TEXTAREA :
+              elemntForm.defaultValue = realData[i];
+              break;
+          case this.Types.NUMBER_PICKER :
+              elemntForm.defaultValue = realData[i];
+              break;
+          case this.Types.DATE : 
+              let tabs = realData[i].split('/');
+              let firstElement = tabs[0];
+              tabs[0]=tabs[1]; tabs[1]=firstElement;
+              elemntForm.defaultValue = tabs.join('/');
+              break;
+          case this.Types.RADIO :
+              let j = elemntForm.datas.findIndex(elmt => elmt.text == realData[i]);
+              j > -1 ? elemntForm.selected = elemntForm.datas[j].value : elemntForm.selected = 0;
+              break;
+          case this.Types.SELECT :
+              let l = elemntForm.datas.findIndex(elmt => elmt.text == realData[i]);
+              l > -1 ? elemntForm.selected = elemntForm.datas[l].value : elemntForm.selected=-1;
+              break;
+        }
+    }
+    }
+  }
+
+  addWithPopup(ev) {
+    this.freeFormElements();
   }
 
   extractRealDataRow(data : any) {
@@ -286,13 +365,237 @@ export class DynamicListingComponent implements OnInit {
     return realData;
   }
 
+  putNewDatas() {
+    let rowToUpdate = this.datas[this.indexLastElementClicked];
+    for (let i =0; i < this.datasForm[0].sectionElements.length; i++) {
+      let elemntForm = this.datasForm[0].sectionElements[i];
+      switch(elemntForm.type) {
+        case this.Types.INPUT :
+            if (this.itemsField[i].value.indexOf('.') > -1) {
+              let treeObject = this.itemsField[i].value.split('.');
+              let lastTreeElement = treeObject.pop();
+              let val = rowToUpdate;
+              treeObject.map(elmt =>  val = val[elmt]);
+              val[lastTreeElement] = elemntForm.defaultValue;
+            } else {
+              rowToUpdate[this.itemsField[i].value] = elemntForm.defaultValue;
+            }
+            break;
+        case this.Types.TEXTAREA :
+            if (this.itemsField[i].value.indexOf('.') > -1) {
+              let treeObject = this.itemsField[i].value.split('.');
+              let lastTreeElement = treeObject.pop();
+              let val = rowToUpdate;
+              treeObject.map(elmt =>  val = val[elmt]);
+              val[lastTreeElement] = elemntForm.defaultValue;
+            } else {
+              rowToUpdate[this.itemsField[i].value] = elemntForm.defaultValue;
+            }
+            break;
+        case this.Types.NUMBER_PICKER :
+            if (this.itemsField[i].value.indexOf('.') > -1) {
+              let treeObject = this.itemsField[i].value.split('.');
+              let lastTreeElement = treeObject.pop();
+              let val = rowToUpdate;
+              treeObject.map(elmt =>  val = val[elmt]);
+              val[lastTreeElement] = elemntForm.defaultValue;
+            } else {
+              rowToUpdate[this.itemsField[i].value] = elemntForm.defaultValue;
+            }
+            break;
+        case this.Types.DATE : 
+            let valToPut = elemntForm.defaultValue;
+            if (valToPut.indexOf('/') > 2 ) {
+              valToPut= valToPut.split('/').reverse().join('/');
+            } else {
+              let tabs = valToPut.split('/');
+              let firstElement = tabs[0];
+              tabs[0]=tabs[1]; tabs[1]=firstElement;
+              valToPut = tabs.join('/');
+            }
+            if (this.itemsField[i].value.indexOf('.') > -1) {
+              let treeObject = this.itemsField[i].value.split('.');
+              let lastTreeElement = treeObject.pop();
+              let val = rowToUpdate;
+              treeObject.map(elmt =>  val = val[elmt]);
+              val[lastTreeElement] = valToPut;
+            } else {
+              rowToUpdate[this.itemsField[i].value] = valToPut;
+            }
+            break;
+        case this.Types.RADIO :
+            let index = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
+            if (index > -1) {
+              let valToPut1 = elemntForm.datas[index].text;
+              if (this.itemsField[i].value.indexOf('.') > -1) {
+                let treeObject = this.itemsField[i].value.split('.');
+                let lastTreeElement = treeObject.pop();
+                let val = rowToUpdate;
+                treeObject.map(elmt =>  val = val[elmt]);
+                val[lastTreeElement] = valToPut1;
+              } else {
+                rowToUpdate[this.itemsField[i].value] = valToPut1;
+              }
+            }
+            break;
+        case this.Types.SELECT :
+            let index1 = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
+            if (index1 > -1) {
+              let valToPut2 = elemntForm.datas[index1].text;
+              if (this.itemsField[i].value.indexOf('.') > -1) {
+                let treeObject = this.itemsField[i].value.split('.');
+                let lastTreeElement = treeObject.pop();
+                let val = rowToUpdate;
+                treeObject.map(elmt =>  val = val[elmt]);
+                val[lastTreeElement] = valToPut2;
+              } else {
+                rowToUpdate[this.itemsField[i].value] = valToPut2;
+              }
+            }
+            break;
+      }
+    }
+    this.myListing.instance.refresh();
+  }
+
+
+  putNewDatasAdd() {
+    let rowToAdd = {};
+    for (let i =0; i < this.datasForm[0].sectionElements.length; i++) {
+      let elemntForm = this.datasForm[0].sectionElements[i];
+      switch(elemntForm.type) {
+        case this.Types.INPUT :
+            if (this.itemsField[i].value.indexOf('.') > -1) {
+              let treeObject = this.itemsField[i].value.split('.');
+              let lastTreeElement = treeObject.pop();
+              let val = rowToAdd;
+              treeObject.map(elmt =>  {
+                val[elmt]={};
+                val = val[elmt];
+              });
+              val[lastTreeElement] = elemntForm.defaultValue;
+            } else {
+              rowToAdd[this.itemsField[i].value] = elemntForm.defaultValue;
+            }
+            break;
+        case this.Types.TEXTAREA :
+            if (this.itemsField[i].value.indexOf('.') > -1) {
+              let treeObject = this.itemsField[i].value.split('.');
+              let lastTreeElement = treeObject.pop();
+              let val = rowToAdd;
+              treeObject.map(elmt =>  {
+                val[elmt]={};
+                val = val[elmt];
+              });
+              val[lastTreeElement] = elemntForm.defaultValue;
+            } else {
+              rowToAdd[this.itemsField[i].value] = elemntForm.defaultValue;
+            }
+            break;
+        case this.Types.NUMBER_PICKER :
+            if (this.itemsField[i].value.indexOf('.') > -1) {
+              let treeObject = this.itemsField[i].value.split('.');
+              let lastTreeElement = treeObject.pop();
+              let val = rowToAdd;
+              treeObject.map(elmt =>  {
+                val[elmt]={};
+                val = val[elmt];
+              });
+              val[lastTreeElement] = elemntForm.defaultValue;
+            } else {
+              rowToAdd[this.itemsField[i].value] = elemntForm.defaultValue;
+            }
+        case this.Types.DATE : 
+            let valToPut = elemntForm.defaultValue;
+            console.log(valToPut);
+            if (valToPut.indexOf('/') > 2 ) {
+              valToPut= valToPut.split('/').reverse().join('/');
+            } else {
+              let tabs = valToPut.split('/');
+              let firstElement = tabs[0];
+              tabs[0]=tabs[1]; tabs[1]=firstElement;
+              valToPut = tabs.join('/');
+            }
+            if (this.itemsField[i].value.indexOf('.') > -1) {
+              let treeObject = this.itemsField[i].value.split('.');
+              let lastTreeElement = treeObject.pop();
+              let val = rowToAdd;
+              treeObject.map(elmt =>  {
+                val[elmt]={};
+                val = val[elmt];
+              });
+              val[lastTreeElement] = valToPut;
+            } else {
+              rowToAdd[this.itemsField[i].value] = valToPut;
+            }
+            break;
+        case this.Types.RADIO :
+            let index = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
+            if (index > -1) {
+              let valToPut1 = elemntForm.datas[index].text;
+              if (this.itemsField[i].value.indexOf('.') > -1) {
+                let treeObject = this.itemsField[i].value.split('.');
+                let lastTreeElement = treeObject.pop();
+                let val = rowToAdd;
+                treeObject.map(elmt =>  {
+                  val[elmt]={};
+                  val = val[elmt];
+                });
+                val[lastTreeElement] = valToPut1;
+              } else {
+                rowToAdd[this.itemsField[i].value] = valToPut1;
+              }
+            }
+            break;
+        case this.Types.SELECT :
+            let index1 = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
+            if (index1 > -1) {
+              let valToPut2 = elemntForm.datas[index1].text;
+              if (this.itemsField[i].value.indexOf('.') > -1) {
+                let treeObject = this.itemsField[i].value.split('.');
+                let lastTreeElement = treeObject.pop();
+                let val = rowToAdd;
+                treeObject.map(elmt =>  {
+                  val[elmt]={};
+                  val = val[elmt];
+                });
+                val[lastTreeElement] = valToPut2;
+              } else {
+                rowToAdd[this.itemsField[i].value] = valToPut2;
+              }
+            }
+            break;
+      }
+    }
+    this.datas.unshift(rowToAdd);
+    this.myListing.instance.refresh();
+  }
+
+  // réccupérer les nouvelles lignes
+  getGeneratedListing() {
+    return this.datas;
+  }
+
+  saveEditingList() {
+    console.log('ADADAD');
+    this.onSaveClicked.emit(this.getGeneratedListing());
+    this.inEditMode = false;
+  }
+
   saveFormPopUp() {
-    console.log(this.myPopup.instance);
     this.myPopup.instance.cancelEditData();
+    if (this.indexLastElementClicked > -1) {
+      this.putNewDatas();
+      this.indexLastElementClicked = -1;
+    } else this.putNewDatasAdd();
+    this.reajusteForm();
+    if (!this.elementsUpdated) this.elementsUpdated = true;
   }
 
   cancelFormPopUp() {
     this.myPopup.instance.cancelEditData();
+    this.indexLastElementClicked = -1;
+    this.reajusteForm();
   }
 
 

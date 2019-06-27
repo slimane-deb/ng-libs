@@ -20,13 +20,18 @@ export class AppComponent {
   clickSend() {
     console.log(this.dynamicForm.generateDataToSend());
   }
-
+/*******************************************************For dynamic-listing test *********************************************************************/
   cliked(ev){
     // console.log(ev);
   }
 
   clickedHref(ev) {
     console.log(ev);
+  }
+
+  onSaveLising(list) {
+    console.log(list);
+    location.reload();
   }
 /******* **************************************************For dynamic-form tests*************************************************************************/
   changeVisibility() {
