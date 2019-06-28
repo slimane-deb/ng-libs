@@ -46,17 +46,18 @@ export class DynamicListingComponent implements OnInit {
 
   itemsField : any[] = [];
 
-  // items selected for deletion
+  // ///////////items selected for deletion
   selectedItemKeys: any[] = [];
 
   private keysClass : string[]=[];
   template : string = "cellTemplate";
 
-  // for the form popup
+  ////////////// for the form popup
   datasForm : any[] = [];
   @Input() colNumberForm : Number = 2;
   @Input() nameClsFormPopup : string;
   @Output() onSaveClicked = new EventEmitter<any>();
+  @Output() onEditClicked = new EventEmitter<any>();
   Types = FormTypes;
   indexLastElementClicked = -1;
   elementsUpdated = false;
@@ -166,7 +167,8 @@ export class DynamicListingComponent implements OnInit {
 
 
   globalEdit() {
-    this.inEditMode = true;
+    // this.inEditMode = true;
+    this.onEditClicked.emit();
   }
 
 
@@ -596,6 +598,19 @@ export class DynamicListingComponent implements OnInit {
     this.myPopup.instance.cancelEditData();
     this.indexLastElementClicked = -1;
     this.reajusteForm();
+  }
+
+
+  setInDeleteMode(type : boolean) {
+    this.deleteMode = type;
+  }
+
+  setInEditMode(type : boolean) {
+    this.inEditMode = type;
+  }
+
+  setEditType(type : string) {
+    this.editableMode = type;
   }
 
 

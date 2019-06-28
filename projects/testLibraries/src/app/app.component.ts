@@ -33,6 +33,10 @@ export class AppComponent {
     console.log(list);
     location.reload();
   }
+
+  onEditListing() {
+    console.log('Edit Clicked');
+  }
 /******* **************************************************For dynamic-form tests*************************************************************************/
   changeVisibility() {
     this.dynamicForm.changeListVisibilityElements(["name","title1"],true);

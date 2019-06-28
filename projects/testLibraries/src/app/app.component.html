@@ -4,7 +4,7 @@
 <button (click)="clickSend()" >TEST GET INFOS</button> -->
 
 <lib-dynamic-listing nameCls="TestListing" [handlerInstantition]="handlerInst" (onRowClicked)="cliked($event)" (onHrefClicked)="clickedHref($event)" editableMode="popup"
-nameClsFormPopup="FormListing" (onSaveClicked)="onSaveLising($event)" [addInEditMode]="true" [deleteMode]="true" ></lib-dynamic-listing>
+nameClsFormPopup="FormListing" (onSaveClicked)="onSaveLising($event)" (onEditClicked)="onEditListing($event)" [addInEditMode]="true" [deleteMode]="true" ></lib-dynamic-listing>
 
 <!-- <lib-dynamic-form nameCls="Test" [handlerInstantition]="handlerInst"  ></lib-dynamic-form>
 
