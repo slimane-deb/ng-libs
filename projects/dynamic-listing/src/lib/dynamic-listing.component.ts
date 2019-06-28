@@ -56,6 +56,8 @@ export class DynamicListingComponent implements OnInit {
   datasForm : any[] = [];
   @Input() colNumberForm : Number = 2;
   @Input() nameClsFormPopup : string;
+  @Input() colNumberFormPopup : Number = 2;
+  @Input() widthFormPopup : Number = null;
   @Output() onSaveClicked = new EventEmitter<any>();
   @Output() onEditClicked = new EventEmitter<any>();
   Types = FormTypes;

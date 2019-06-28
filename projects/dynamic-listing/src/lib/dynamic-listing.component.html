@@ -71,7 +71,7 @@
   </dxo-popup>
     
     <!---------------------------------------Pour le Formulaiiiiiiiiiiiiire-------------------------------------------------->
-    <dxo-form id="form" [colCount]="colNumber" [width]="width" validationGroup="formGroup" >
+    <dxo-form id="form" [colCount]="colNumberFormPopup" [width]="widthFormPopup" validationGroup="formGroup" >
       <dxi-item *ngFor="let section of datasForm" itemType="group" caption="{{section.section}}" >
         <ng-container *ngFor="let field of section.sectionElements" >
   
