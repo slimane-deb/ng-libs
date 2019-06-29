@@ -5,12 +5,39 @@ import { DxDataGridComponent, DxPopupComponent, DxButtonComponent } from 'devext
 import { FormFile } from './listingModel/formFile';
 import { FormField } from './listingModel/formField';
 import { FormTypes } from './listingModel/formType';
+import { ActionButtons } from './authorTypes/ProgresAdnActions';
+
+// constante buttons
+const btnSave : ActionButtons = {
+  title : "Save",
+  items : [],
+  type : 0,
+  function : "saveListing",
+  disabled : true
+};
+
+const btnAdd : ActionButtons = {
+  title : "Add",
+  items : [],
+  type : 1,
+  function : "addRowListing"
+};
+
+const btnDelete : ActionButtons = {
+  title : "Delete",
+  items : [],
+  type : 1,
+  function : "deleteRowListing",
+  disabled : true
+}
+
 
 @Component({
   selector: 'lib-dynamic-listing',
   templateUrl: './dynamic-listing.component.html',
   styleUrls: ['./dynamic-listing.component.scss']
 })
+
 export class DynamicListingComponent implements OnInit {
 
   @ViewChild(DxDataGridComponent) myListing : DxDataGridComponent;
@@ -34,6 +61,8 @@ export class DynamicListingComponent implements OnInit {
   @Input() datas : any[] = [];
 
   @Output() displayTitle = new EventEmitter<any>();
+  @Output() displayButton = new EventEmitter<any>();
+  @Output() onDisabledChange = new EventEmitter<any>();
 
   @Input() deleteMode : boolean = false;
 
@@ -66,6 +95,7 @@ export class DynamicListingComponent implements OnInit {
 
   constructor(private listingProvider : DynamicListingService) { 
     this.publishTitle = this.publishTitle.bind(this);
+    this.publishButtonEditing = this.publishButtonEditing.bind(this);
     this.parseClass = this.parseClass.bind(this);
     this.parseFormListing = this.parseFormListing.bind(this);
     this.saveFormPopUp = this.saveFormPopUp.bind(this);
@@ -75,6 +105,7 @@ export class DynamicListingComponent implements OnInit {
     this.freeFormElements = this.freeFormElements.bind(this);
     this.getGeneratedListing = this.getGeneratedListing.bind(this);
     this.saveEditingList = this.saveEditingList.bind(this);
+    this.addEditingRow = this.addEditingRow.bind(this);
     setTimeout(()=> {
       this.parseClass();
       return this.parseFormListing();
@@ -124,6 +155,7 @@ export class DynamicListingComponent implements OnInit {
 
   selectionChanged(data: any) {
     this.selectedItemKeys = data.selectedRowKeys;
+    this.selectedItemKeys.length == 0 ? this.changeDeleteState(true) : this.changeDeleteState(false);
   }
 
   deleteSelection() {
@@ -164,6 +196,25 @@ export class DynamicListingComponent implements OnInit {
     return value; 
   }
 
+  ////// Buttons to publish///////////////////////
+  publishButtonEditing() {
+    let btns : ActionButtons[]= [];
+    btns.push(btnSave);
+    this.addInEditMode && btns.push(btnAdd);
+    this.deleteMode && btns.push(btnDelete);
+    this.displayButton.emit(btns);  
+  }
+
+  changeSaveState(state : boolean) {
+    let obj = {button : btnSave, disabled : state};
+    this.onDisabledChange.emit(obj);
+  }
+
+  changeDeleteState(state : boolean) {
+    let obj = {button : btnDelete, disabled : state};
+    this.onDisabledChange.emit(obj);
+  }
+
 
   ////// Fo form Editing mode//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -173,11 +224,19 @@ export class DynamicListingComponent implements OnInit {
     this.onEditClicked.emit();
   }
 
+  initiateEditMode() {
+    this.publishButtonEditing();
+    this.inEditMode = true;
+  }
+
 
   ////// FOr BAtch Edit //////////////////////////////////////////////////////////////////////
 
   rowBatchBeenUpdated(ev) {
-    if (!this.elementsUpdated) this.elementsUpdated = true;
+    if (!this.elementsUpdated) {
+      this.elementsUpdated = true;
+      this.changeSaveState(false);
+    };
   }
 
 
@@ -581,9 +640,12 @@ export class DynamicListingComponent implements OnInit {
   }
 
   saveEditingList() {
-    console.log('ADADAD');
     this.onSaveClicked.emit(this.getGeneratedListing());
     this.inEditMode = false;
+  }
+
+  addEditingRow() {
+    this.myListing.instance.addRow();
   }
 
   saveFormPopUp() {
@@ -593,7 +655,10 @@ export class DynamicListingComponent implements OnInit {
       this.indexLastElementClicked = -1;
     } else this.putNewDatasAdd();
     this.reajusteForm();
-    if (!this.elementsUpdated) this.elementsUpdated = true;
+    if (!this.elementsUpdated) {
+      this.elementsUpdated = true;
+      this.changeSaveState(false);
+    }
   }
 
   cancelFormPopUp() {
