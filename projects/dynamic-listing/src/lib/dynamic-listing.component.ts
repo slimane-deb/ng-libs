@@ -26,7 +26,7 @@ const btnAdd : ActionButtons = {
 const btnDelete : ActionButtons = {
   title : "Delete",
   items : [],
-  type : 1,
+  type : 2,
   function : "deleteRowListing",
   disabled : true
 }
@@ -108,7 +108,7 @@ export class DynamicListingComponent implements OnInit {
     this.addEditingRow = this.addEditingRow.bind(this);
     setTimeout(()=> {
       this.parseClass();
-      return this.parseFormListing();
+      return this.nameClsFormPopup && this.parseFormListing();
     },0);
   }
 
@@ -161,7 +161,10 @@ export class DynamicListingComponent implements OnInit {
   deleteSelection() {
     this.datas = this.datas.filter(elemt => this.selectedItemKeys.indexOf(elemt)<0);
     this.myListing.instance.refresh();
-    this.elementsUpdated = true;
+    if (!this.elementsUpdated) {
+      this.elementsUpdated = true;
+      this.changeSaveState(false);
+    };
   }
 
   publishTitle() {
@@ -213,6 +216,15 @@ export class DynamicListingComponent implements OnInit {
   changeDeleteState(state : boolean) {
     let obj = {button : btnDelete, disabled : state};
     this.onDisabledChange.emit(obj);
+  }
+
+  /////// Remove add button//////////////////////////////////////////////////////
+
+  toolbarPreparing(ev) {
+    let toolbarItems = ev.toolbarOptions.items;
+      toolbarItems.forEach(elmt => {
+        if (elmt.name=="addRowButton") elmt.visible = false;
+      });
   }
 
 
@@ -641,7 +653,6 @@ export class DynamicListingComponent implements OnInit {
 
   saveEditingList() {
     this.onSaveClicked.emit(this.getGeneratedListing());
-    this.inEditMode = false;
   }
 
   addEditingRow() {

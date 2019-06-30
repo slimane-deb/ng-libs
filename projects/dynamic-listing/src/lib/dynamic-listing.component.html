@@ -5,7 +5,7 @@
     style="margin: 5px 10px; margin-left: 5px; text-transform: uppercase"
   >
   </dx-button>
-  <dx-button
+  <!-- <dx-button
   *ngIf = "deleteMode && inEditMode" 
     text="Delete"
     [disabled]="!selectedItemKeys.length"
@@ -20,7 +20,7 @@
     (onClick)="saveEditingList()"
     style="margin: 5px 10px; margin-left: 5px; text-transform: uppercase"
     >
-  </dx-button>
+  </dx-button> -->
   
 </div>
 
@@ -35,7 +35,8 @@
   (onSelectionChanged)="selectionChanged($event)"
   (onEditingStart)="editWithPopup($event)"
   (onInitNewRow)="addWithPopup($event)"
-  (onRowUpdated)="rowBatchBeenUpdated($event)" 
+  (onRowUpdated)="rowBatchBeenUpdated($event)"
+  (onToolbarPreparing)="toolbarPreparing($event)"
 >
 
   <dxo-pager [showPageSizeSelector]="true" [showInfo]="true" ></dxo-pager>
