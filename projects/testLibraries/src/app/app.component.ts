@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, AfterViewInit } from '@angular/core';
 import * as handler from "./handlerClasses";
 import {DynamicFormComponent} from "projects/dynamic-form/src/public-api";
 
@@ -7,18 +7,25 @@ import {DynamicFormComponent} from "projects/dynamic-form/src/public-api";
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  @ViewChild(DynamicFormComponent) dynamicForm : DynamicFormComponent;
+export class AppComponent implements AfterViewInit {
 
+  @ViewChild(DynamicFormComponent) dynamicForm : DynamicFormComponent;
   title = 'testLibraries';
 
   handlerInst = handler;
 
+  ngAfterViewInit(): void {
+    console.log(this.dynamicForm.myform.instance);
+
+    console.log('sdsdsdsds');
+  }
+
   constructor() {
+
   }
 
   clickSend() {
-    console.log(this.dynamicForm.generateDataToSend());
+    // console.log(this.dynamicForm.generateDataToSend());
   }
 /*******************************************************For dynamic-listing test *********************************************************************/
   cliked(ev){
@@ -26,16 +33,16 @@ export class AppComponent {
   }
 
   clickedHref(ev) {
-    console.log(ev);
+    // console.log(ev);
   }
 
   onSaveLising(list) {
-    console.log(list);
+    // console.log(list);
     location.reload();
   }
 
   onEditListing() {
-    console.log('Edit Clicked');
+    // console.log('Edit Clicked');
   }
 /******* **************************************************For dynamic-form tests*************************************************************************/
   changeVisibility() {
@@ -55,7 +62,7 @@ export class AppComponent {
   }
 
   test() {
-    console.log(this.dynamicForm.generateDataToSend());
+    // console.log(this.dynamicForm.generateDataToSend());
   }
 /***************************************************************************************************************************************************************/
 

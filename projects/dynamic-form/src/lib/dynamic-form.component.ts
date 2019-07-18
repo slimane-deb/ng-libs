@@ -81,15 +81,15 @@ setDataToTable() {
         this.publishButton();
         this.publishTitle();
       }
-      console.log(keys);
+      // console.log(keys);
       let formFile : FormFile = null;
       let tabForm : FormField[] = [];
       let lastSection : Boolean = false;
       for (let i=0; i<keys.length;i++) {
         let elmt = keys[i];
-        console.log(attributeAccess[elmt]);
+        // console.log(attributeAccess[elmt]);
         if (typeof attributeAccess[elmt] == "string") {
-          console.log('SECTION');
+          // console.log('SECTION');
           if (lastSection == true) {
             formFile.sectionElements = [...tabForm];
             this.datas.push({...formFile});
@@ -103,7 +103,7 @@ setDataToTable() {
           keys.splice(i,1);
           i--;
         } else {
-          console.log('ELEMENTS');
+          // console.log('ELEMENTS');
           if (lastSection == false) {
             formFile = new FormFile("");
             lastSection = true;
@@ -146,7 +146,7 @@ setDataToTable() {
       formFile.sectionElements = [...tabForm];
       this.datas.push({...formFile});
       ii++;
-      console.log(this.datas);
+      // console.log(this.datas);
       if (this.datas.length < this.colNumber) {
         this.colNumber = this.datas.length;
       }
@@ -159,7 +159,7 @@ setAsynDatas(elmt : any, indexI : any, indexJ : any) {
       res => {
           elmt.customData = res;
           elmt.selected = elmt.defaultValue;
-          console.log(indexI+"      "+indexJ);
+          // console.log(indexI+"      "+indexJ);
         let id = setInterval(()=> {
           if (this.datas[indexI]!== undefined && this.datas[indexI].sectionElements[indexJ]!==undefined) {
             Object.assign(this.datas[indexI].sectionElements[indexJ],{...elmt});
