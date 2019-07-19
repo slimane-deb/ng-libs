@@ -15,13 +15,17 @@ export class AppComponent implements AfterViewInit {
   handlerInst = handler;
 
   ngAfterViewInit(): void {
-    console.log(this.dynamicForm.myform.instance);
 
-    console.log('sdsdsdsds');
   }
 
   constructor() {
 
+  }
+  handleSelectChange(value) {
+    // console.log(this.dynamicForm.myform.instance);
+
+    console.log(value.label);
+    console.log(value.datas[value.selected].text);
   }
 
   clickSend() {

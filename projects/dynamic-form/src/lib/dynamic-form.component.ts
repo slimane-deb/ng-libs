@@ -45,6 +45,8 @@ export class DynamicFormComponent implements OnInit {
 
   @Output()
   displayTitle = new EventEmitter<any>();
+  @Output()
+  selectDataChange = new EventEmitter<any>();
 
 
   constructor(private formProvider : DynamicFormService) { 
@@ -362,5 +364,7 @@ generateDataToSend() {
 }
 
 
-
+  onValueChanged(value: any) {
+    this.selectDataChange.emit(value);
+  }
 }

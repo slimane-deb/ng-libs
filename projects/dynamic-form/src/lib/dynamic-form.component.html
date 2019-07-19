@@ -86,6 +86,7 @@
               [(value)] = "field.selected"
               width =  "100%"
               [disabled]="field.disabled"
+              (onValueChanged)="onValueChanged(field)"
               >
               <dx-validator validationGroup="formGroup" >
                   <dxi-validation-rule *ngIf="field.required==true" type="required" message="please fill this field"></dxi-validation-rule>
