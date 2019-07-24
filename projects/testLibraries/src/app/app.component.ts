@@ -1,6 +1,6 @@
 import { Component, ViewChild, AfterViewInit } from '@angular/core';
-import * as handler from "./handlerClasses";
-import {DynamicFormComponent} from "projects/dynamic-form/src/public-api";
+import * as handler from './handlerClasses';
+import {DynamicFormComponent} from 'projects/dynamic-form/src/public-api';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +9,7 @@ import {DynamicFormComponent} from "projects/dynamic-form/src/public-api";
 })
 export class AppComponent implements AfterViewInit {
 
-  @ViewChild(DynamicFormComponent) dynamicForm : DynamicFormComponent;
+  @ViewChild(DynamicFormComponent) dynamicForm: DynamicFormComponent;
   title = 'testLibraries';
 
   handlerInst = handler;
@@ -21,18 +21,23 @@ export class AppComponent implements AfterViewInit {
   constructor() {
 
   }
-  handleSelectChange(value) {
+  handleSelectChange(event) {
     // console.log(this.dynamicForm.myform.instance);
 
-    console.log(value.label);
-    console.log(value.datas[value.selected].text);
+    // this.dynamicForm.keysClass
+    console.log(event.event);
+    console.log(event.value);
+    if (event.event.value == 1) {
+      this.dynamicForm.changeListVisibilityElements(['ennnnn'], true);
+    }
+    // console.log(event.datas[event.selected].text);
   }
 
   clickSend() {
     // console.log(this.dynamicForm.generateDataToSend());
   }
 /*******************************************************For dynamic-listing test *********************************************************************/
-  cliked(ev){
+  cliked(ev) {
     // console.log(ev);
   }
 
@@ -50,19 +55,19 @@ export class AppComponent implements AfterViewInit {
   }
 /******* **************************************************For dynamic-form tests*************************************************************************/
   changeVisibility() {
-    this.dynamicForm.changeListVisibilityElements(["name","title1"],true);
+    this.dynamicForm.changeListVisibilityElements(['name', 'title1'], true);
   }
 
   changeVisibilityYes() {
-    this.dynamicForm.changeListVisibilityElements(["name","title1"],false);
+    this.dynamicForm.changeListVisibilityElements(['name', 'title1'], false);
   }
 
   changeDisabled() {
-    this.dynamicForm.changeListDisabledElements(["name","title1"],true);
+    this.dynamicForm.changeListDisabledElements(['name', 'title1'], true);
   }
 
   changeDisabledYes() {
-    this.dynamicForm.changeListDisabledElements(["name","title1"],false);
+    this.dynamicForm.changeListDisabledElements(['name', 'title1'], false);
   }
 
   test() {

@@ -36,7 +36,7 @@ export class DynamicFormComponent implements OnInit {
 
   datas : any[] = [];
 
-  private keysClass : string[]=[];
+  keysClass : string[]=[];
 
   Types = FormTypes;
 
@@ -364,7 +364,7 @@ generateDataToSend() {
 }
 
 
-  onValueChanged(value: any) {
-    this.selectDataChange.emit(value);
+  onValueChanged($event, field) {
+    this.selectDataChange.emit({ event: $event, value: field});
   }
 }
