@@ -191,7 +191,8 @@ setAsynDatas(elmt : any, indexI : any, indexJ : any) {
         for (let j=0; j< elmts.length; j++) {
           let formField = elmts[j];
           if (index == idx) {
-              formField.datas = data;
+              // formField.datas = data;
+              formField.customData = data;
               update = true;
             index++;
             break;

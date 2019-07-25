@@ -39,7 +39,7 @@ export class Test {
     type : FormTypes.SELECT,
     datas : [],
     // datas : new URL("http://dummy.restapiexample.com/api/v1/employees"),
-    // valueTextUrl : {valueKey : "id", textKey : "employee_name"},
+    valueTextUrl : {valueKey : "id", textKey : "libelle"},
     required : true,
     multiple : false,
     defaultValue : 2
