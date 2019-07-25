@@ -6,6 +6,7 @@ import { FormField } from './formModel/formField';
 import { ActionButtons } from './authorTypes/ProgresAdnActions';
 import { TitleDescr } from './authorTypes/titleDescription';
 import { DynamicFormService } from './dynamic-form.service';
+import data from "devextreme/bundles/dx.all";
 
 @Component({
   selector: 'lib-dynamic-form',
@@ -49,7 +50,7 @@ export class DynamicFormComponent implements OnInit {
   selectDataChange = new EventEmitter<any>();
 
 
-  constructor(private formProvider : DynamicFormService) { 
+  constructor(private formProvider : DynamicFormService) {
     this.setDataToTable = this.setDataToTable.bind(this);
     this.publishButton = this.publishButton.bind(this);
     this.publishTitle = this.publishTitle.bind(this);
@@ -112,7 +113,7 @@ setDataToTable() {
           }
           if (attributeAccess[elmt].type == FormTypes.SELECT) {
             if (attributeAccess[elmt].datas.hostname == undefined)
-              if (attributeAccess[elmt].defaultValue) 
+              if (attributeAccess[elmt].defaultValue)
                 attributeAccess[elmt].selected = attributeAccess[elmt].defaultValue;
               else attributeAccess[elmt].selected =-1;
             else {
@@ -171,6 +172,39 @@ setAsynDatas(elmt : any, indexI : any, indexJ : any) {
       },
       err => console.log(err));
 }
+
+  changeEltData(formFieldName : string, data: any) {
+    let datas1 = []; // contain sections of form
+    let update = false;
+    this.datas.map(elmt => {
+      let obj = {};
+      obj["section"] = elmt.section;
+      obj["sectionElements"] = [];
+      elmt.sectionElements.map(elment => obj["sectionElements"].push({...elment}));
+      datas1.push(obj);
+    })
+    let index = 0;
+    let idx = this.keysClass.indexOf(formFieldName);
+    if (idx > -1) {
+      for (let i =0; i< datas1.length; i++) {
+        let elmts = datas1[i].sectionElements;
+        for (let j=0; j< elmts.length; j++) {
+          let formField = elmts[j];
+          if (index == idx) {
+              formField.datas = data;
+              update = true;
+            index++;
+            break;
+          }
+          index++;
+        }
+      }
+    }
+    if (update) {
+      this.datas.length = 0;
+      this.datas = [...datas1];
+    }
+  }
 
 changeVisibilityElement(formFieldName : string, visibility : boolean) {
   let datas1 = [];
@@ -292,7 +326,7 @@ publishButton() {
     type : 1,
     function : "resetSendForm"
   });
-  this.displayButton.emit(btns);  
+  this.displayButton.emit(btns);
 }
 
 publishTitle() {
@@ -314,19 +348,19 @@ generateDataToSend() {
     for (let j=0; j< elmts.length; j++) {
       let formField = elmts[j];
       switch(formField.type) {
-        case FormTypes.INPUT : 
+        case FormTypes.INPUT :
           let data = {};
           data[this.keysClass[index]] = formField.defaultValue;
           dataToSend.push(data);
           index ++;
         break;
-        case FormTypes.TEXTAREA : 
+        case FormTypes.TEXTAREA :
           let data1 = {};
           data1[this.keysClass[index]] = formField.defaultValue;
           dataToSend.push(data1);
           index ++;
         break;
-        case FormTypes.DATE : 
+        case FormTypes.DATE :
           let data2={};
           data2[this.keysClass[index]] = formField.defaultValue;
           dataToSend.push(data2);
@@ -338,19 +372,19 @@ generateDataToSend() {
           dataToSend.push(data6);
           index++;
         break;
-        case FormTypes.RADIO : 
+        case FormTypes.RADIO :
           let data3 = {};
           data3[this.keysClass[index]] = formField.selected;
           dataToSend.push(data3);
           index ++;
         break;
-        case FormTypes.CHEKBOX : 
+        case FormTypes.CHEKBOX :
           let data4 = {};
           data4[this.keysClass[index]] = formField.datas.filter(elt => elt.selected == true).map(elmt => elmt.value);
           dataToSend.push(data4);
           index ++;
         break;
-        case FormTypes.SELECT : 
+        case FormTypes.SELECT :
           let data5 = {};
           if (formField.multiple) data5[this.keysClass[index]] = formField.defaultValue;
           else data5[this.keysClass[index]] = formField.selected;

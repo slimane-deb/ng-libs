@@ -34,6 +34,18 @@ export class Test {
     })
     name;
 
+  @FormDeco({
+    label : "Testo",
+    type : FormTypes.SELECT,
+    datas : [],
+    // datas : new URL("http://dummy.restapiexample.com/api/v1/employees"),
+    // valueTextUrl : {valueKey : "id", textKey : "employee_name"},
+    required : true,
+    multiple : false,
+    defaultValue : 2
+  })
+  name2;
+
     @SectionForm("Seciont2")
     section1;
 

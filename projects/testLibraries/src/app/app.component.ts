@@ -28,7 +28,7 @@ export class AppComponent implements AfterViewInit {
     console.log(event.event);
     console.log(event.value);
     if (event.event.value == 1) {
-      this.dynamicForm.changeListVisibilityElements(['ennnnn'], true);
+      this.dynamicForm.changeEltData('name2', [{value : 0, text : "xxx"},{value : 1, text : "ccc"},{value : 2, text : "vvv"}]);
     }
     // console.log(event.datas[event.selected].text);
   }
