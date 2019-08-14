@@ -6,7 +6,7 @@
   >
   </dx-button>
   <!-- <dx-button
-  *ngIf = "deleteMode && inEditMode" 
+  *ngIf = "deleteMode && inEditMode"
     text="Delete"
     [disabled]="!selectedItemKeys.length"
     (onClick)="deleteSelection()"
@@ -21,7 +21,7 @@
     style="margin: 5px 10px; margin-left: 5px; text-transform: uppercase"
     >
   </dx-button> -->
-  
+
 </div>
 
 
@@ -50,7 +50,7 @@
       title="Edit"
       [showTitle]="true"
       [showCloseButton] = false
-       > 
+       >
     <dxi-toolbar-item
         widget="dxButton"
         location="after"
@@ -69,14 +69,14 @@
             onClick: cancelFormPopUp
         }">
     </dxi-toolbar-item>
-  
+
   </dxo-popup>
-    
+
     <!---------------------------------------Pour le Formulaiiiiiiiiiiiiire-------------------------------------------------->
     <dxo-form id="form" [colCount]="colNumberFormPopup" [width]="widthFormPopup" validationGroup="formGroup" >
       <dxi-item *ngFor="let section of datasForm" itemType="group" caption="{{section.section}}" >
         <ng-container *ngFor="let field of section.sectionElements" >
-  
+
             <dxi-item *ngIf="field.type==Types.INPUT" [dataField]="field.label" >
             <dxi-validation-rule *ngIf="field.required==true" type="required" message="please fill this field"></dxi-validation-rule>
             <dx-text-box
@@ -95,7 +95,7 @@
             </dx-validator>
             </dx-text-box>
           </dxi-item>
-  
+
           <dxi-item *ngIf="field.type==Types.TEXTAREA" [dataField]="field.label" >
             <dxi-validation-rule *ngIf="field.required==true" type="required" message="please fill this field"></dxi-validation-rule>
             <dx-text-area
@@ -114,7 +114,7 @@
             </dx-validator>
             </dx-text-area>
           </dxi-item>
-          
+
           <dxi-item *ngIf="field.type==Types.DATE" [dataField]="field.label" >
               <dxi-validation-rule *ngIf="field.required==true" type="required" message="please fill this field"></dxi-validation-rule>
             <dx-date-box
@@ -131,7 +131,7 @@
             </dx-validator>
             </dx-date-box>
           </dxi-item>
-  
+
           <dxi-item *ngIf="field.type==Types.NUMBER_PICKER" [dataField]="field.label" >
             <dxi-validation-rule *ngIf="field.required==true" type="required" message="please fill this field"></dxi-validation-rule>
             <dx-number-box
@@ -148,7 +148,7 @@
               </dx-validator>
             </dx-number-box>
           </dxi-item>
-  
+
           <dxi-item *ngIf="field.type==Types.SELECT && field.multiple==false" [dataField]="field.label" >
               <dxi-validation-rule *ngIf="field.required==true" type="required" message="please fill this field"></dxi-validation-rule>
               <dx-select-box
@@ -180,7 +180,7 @@
               </dx-validator>
             </dx-tag-box>
           </dxi-item>
-  
+
           <dxi-item *ngIf="field.type==Types.RADIO" class="dx-field" >
             <div class="dx-field-label">{{field.label}}:</div>
             <div class="dx-field-value" >
@@ -195,18 +195,18 @@
             </dx-radio-group>
             </div>
           </dxi-item>
-  
+
           <dxi-item #item *ngIf="field.type==Types.CHEKBOX" [dataField]="field.label" >
             <ng-container *ngFor="let checkElement of field.datas" >
-              <dx-check-box 
-              [text]=checkElement.text 
-              [(value)]="checkElement.selected" 
+              <dx-check-box
+              [text]=checkElement.text
+              [(value)]="checkElement.selected"
               style="margin-right: 10px;"
               [disabled]="field.disabled"
               ></dx-check-box>
             </ng-container>
           </dxi-item>
-          
+
         </ng-container>
       </dxi-item>
     </dxo-form>
@@ -216,12 +216,12 @@
   </dxo-editing>
 
   <dxi-column
-    *ngFor="let item of itemsField; let i=index" 
+    *ngFor="let item of itemsField; let i=index"
     [dataField]="item.value"
     [caption]="item.label"
-    [filterOperations]="['contains', '=']" 
+    [filterOperations]="['contains', '=']"
     [width] = "item.width"
-    [visible]="item.isVisible" ]
+    [visible]= "item.visible"
     [cellTemplate] = "item.href? template : null"
   >
   </dxi-column>

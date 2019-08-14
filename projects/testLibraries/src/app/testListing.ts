@@ -53,7 +53,8 @@ export class TestListing {
 
   @ListingDeco({
     label : 'Charger du dossier',
-    value : "personne->nom"
+    value : "personne->nom",
+    visible: true
   })
   personne;
 }
