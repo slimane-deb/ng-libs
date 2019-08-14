@@ -221,6 +221,7 @@
     [caption]="item.label"
     [filterOperations]="['contains', '=']" 
     [width] = "item.width"
+    [visible]="item.isVisible" ]
     [cellTemplate] = "item.href? template : null"
   >
   </dxi-column>

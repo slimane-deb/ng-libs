@@ -93,7 +93,7 @@
               "projects/testLibraries/src/assets"
             ],
             "styles": [
-              "node_modules/devextreme/dist/css/dx.common.css", 
+              "node_modules/devextreme/dist/css/dx.common.css",
               "node_modules/devextreme/dist/css/dx.light.compact.css",
               "projects/testLibraries/src/styles.css"
             ],
@@ -130,7 +130,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "testLibraries:build"
+            "browserTarget": "testLibraries:build",
+            "port": 4201
           },
           "configurations": {
             "production": {
