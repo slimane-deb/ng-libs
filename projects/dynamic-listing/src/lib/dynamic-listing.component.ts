@@ -6,6 +6,7 @@ import { FormFile } from './listingModel/formFile';
 import { FormField } from './listingModel/formField';
 import { FormTypes } from './listingModel/formType';
 import { ActionButtons } from './authorTypes/ProgresAdnActions';
+import {Router} from "@angular/router";
 
 // constante buttons
 const btnSave : ActionButtons = {
@@ -46,11 +47,11 @@ export class DynamicListingComponent implements OnInit {
   @Output() onRowClicked = new EventEmitter<any>();
 
   @Output() onHrefClicked = new EventEmitter<any>();
-  
+
   @Input() nameCls : string;
 
   @Input() handlerInstantition : object;
-  
+
   titleForm : string;
   urlValidation : URL;
   columnResize: boolean;
@@ -93,7 +94,8 @@ export class DynamicListingComponent implements OnInit {
   indexLastElementClicked = -1;
   elementsUpdated = false;
 
-  constructor(private listingProvider : DynamicListingService) { 
+  constructor(private listingProvider : DynamicListingService,
+              private router: Router) {
     this.publishTitle = this.publishTitle.bind(this);
     this.publishButtonEditing = this.publishButtonEditing.bind(this);
     this.parseClass = this.parseClass.bind(this);
@@ -177,8 +179,12 @@ export class DynamicListingComponent implements OnInit {
 
   cellClicked(ev) {
     this.onRowClicked.emit(ev);
-    if (this.itemsField[ev.columnIndex].href)
-    this.onHrefClicked.emit(this.generateHrefString(this.itemsField[ev.columnIndex].href,ev.rowIndex));
+    if (this.itemsField[ev.columnIndex].href){
+      let url = this.generateHrefString(this.itemsField[ev.columnIndex].href,ev.rowIndex) ;
+      this.onHrefClicked.emit(url);
+      this.router.navigate(this.listingProvider.getRouteAndParams(url));
+
+    }
   }
 
 
@@ -196,7 +202,7 @@ export class DynamicListingComponent implements OnInit {
   accessNestedObject(treeStructure : string, rowIndex : any) {
     let value = this.datas[rowIndex];
     treeStructure.split('.').map(elmt => value= value[elmt] );
-    return value; 
+    return value;
   }
 
   ////// Buttons to publish///////////////////////
@@ -205,7 +211,7 @@ export class DynamicListingComponent implements OnInit {
     btns.push(btnSave);
     this.addInEditMode && btns.push(btnAdd);
     this.deleteMode && btns.push(btnDelete);
-    this.displayButton.emit(btns);  
+    this.displayButton.emit(btns);
   }
 
   changeSaveState(state : boolean) {
@@ -291,7 +297,7 @@ export class DynamicListingComponent implements OnInit {
           }
           if (attributeAccess[elmt].type == FormTypes.SELECT) {
             if (attributeAccess[elmt].datas.hostname == undefined)
-              if (attributeAccess[elmt].defaultValue) 
+              if (attributeAccess[elmt].defaultValue)
                 attributeAccess[elmt].selected = attributeAccess[elmt].defaultValue;
               else attributeAccess[elmt].selected =-1;
             else {
@@ -368,7 +374,7 @@ export class DynamicListingComponent implements OnInit {
         case this.Types.NUMBER_PICKER :
             elemntForm.defaultValue = null;
             break;
-        case this.Types.DATE : 
+        case this.Types.DATE :
             let currentDate = new Date();
             let day = currentDate.getDate()
             let month = currentDate.getMonth() + 1
@@ -404,7 +410,7 @@ export class DynamicListingComponent implements OnInit {
           case this.Types.NUMBER_PICKER :
               elemntForm.defaultValue = realData[i];
               break;
-          case this.Types.DATE : 
+          case this.Types.DATE :
               let tabs = realData[i].split('/');
               let firstElement = tabs[0];
               tabs[0]=tabs[1]; tabs[1]=firstElement;
@@ -478,7 +484,7 @@ export class DynamicListingComponent implements OnInit {
               rowToUpdate[this.itemsField[i].value] = elemntForm.defaultValue;
             }
             break;
-        case this.Types.DATE : 
+        case this.Types.DATE :
             let valToPut = elemntForm.defaultValue;
             if (valToPut.indexOf('/') > 2 ) {
               valToPut= valToPut.split('/').reverse().join('/');
@@ -580,7 +586,7 @@ export class DynamicListingComponent implements OnInit {
             } else {
               rowToAdd[this.itemsField[i].value] = elemntForm.defaultValue;
             }
-        case this.Types.DATE : 
+        case this.Types.DATE :
             let valToPut = elemntForm.defaultValue;
             console.log(valToPut);
             if (valToPut.indexOf('/') > 2 ) {
