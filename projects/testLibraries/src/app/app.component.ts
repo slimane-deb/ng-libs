@@ -1,6 +1,7 @@
-import { Component, ViewChild, AfterViewInit } from '@angular/core';
+import {Component, ViewChild, AfterViewInit, OnInit, AfterViewChecked} from '@angular/core';
 import * as handler from './handlerClasses';
 import {DynamicFormComponent} from 'projects/dynamic-form/src/public-api';
+import { DynamicListingComponent } from 'projects/dynamic-listing/src/public-api';
 
 @Component({
   selector: 'app-root',
@@ -8,13 +9,15 @@ import {DynamicFormComponent} from 'projects/dynamic-form/src/public-api';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewInit {
-
   @ViewChild(DynamicFormComponent) dynamicForm: DynamicFormComponent;
-  title = 'testLibraries';
+  @ViewChild(DynamicListingComponent) dynamicList: DynamicListingComponent;
 
+  title = 'testLibraries';
   handlerInst = handler;
 
+
   ngAfterViewInit(): void {
+    this.dynamicList.changeListVisibilityElements(['situation'], true);
 
   }
 
@@ -73,6 +76,8 @@ export class AppComponent implements AfterViewInit {
   test() {
     // console.log(this.dynamicForm.generateDataToSend());
   }
+
+
 /***************************************************************************************************************************************************************/
 
 }

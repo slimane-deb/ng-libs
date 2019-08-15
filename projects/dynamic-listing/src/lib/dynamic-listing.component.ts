@@ -110,6 +110,7 @@ export class DynamicListingComponent implements OnInit {
     this.addEditingRow = this.addEditingRow.bind(this);
     setTimeout(()=> {
       this.parseClass();
+      this.changeListVisibilityElements = this.changeListVisibilityElements.bind(this);
       return this.nameClsFormPopup && this.parseFormListing();
     },0);
   }
@@ -699,5 +700,41 @@ export class DynamicListingComponent implements OnInit {
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+  changeListVisibilityElements(formFieldNames : string[], visibility : boolean) {
+    var classForm = new (<any>this.handlerInstantition)[this.nameCls]();
+    let datas1: any[] = classForm.__proto__;
+    let update = false;
+    // this.datas.map(elmt => {
+    //   let obj = {};
+    //   obj["section"] = elmt.section;
+    //   obj["sectionElements"] = [];
+    //   elmt.sectionElements.map(elment => obj["sectionElements"].push({...elment}));
+    //   datas1.push(obj);
+    // })
+    let keys = Object.keys(datas1) ;
+    let values = Object.values(datas1);
+    formFieldNames.map(elmt => {
+      let index = 0;
+      let idx = keys.indexOf(elmt);
+      if (idx > -1) {
+        for (let i = 0; i < keys.length; i++) {
+            let formField = values[i];
+            if (index == idx) {
+              if (formField.visible != visibility) {
+                formField.visible = visibility;
+                update = true;
+              }
+              index++;
+              break;
+            }
+            index++;
+          }
+      }
+    });
+    // since we get Reference of @ViewChild
+    // if (update) {
+    //   this.datas.length = 0;
+      // this.datas = datas1;
+    // }
+  }
 }

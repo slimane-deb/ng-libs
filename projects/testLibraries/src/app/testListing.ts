@@ -47,14 +47,15 @@ export class TestListing {
 
   @ListingDeco({
     label : 'Etat',
-    value : "situation->libelle"
+    value : "situation->libelle",
+    visible : false
   })
   situation;
 
   @ListingDeco({
     label : 'Charger du dossier',
     value : "personne->nom",
-    visible: true
+    visible: false
   })
   personne;
 }
