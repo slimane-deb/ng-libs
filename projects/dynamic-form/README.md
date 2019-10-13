@@ -139,7 +139,7 @@ import { DynamicFormComponent } from 'dynamic-form';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  @ViewChild(DynamicFormComponent) dynamicForm : DynamicFormComponent;
+  @ViewChild(DynamicFormComponent, {static: false}) dynamicForm : DynamicFormComponent;
 
   handlerInst = handler;
   ...

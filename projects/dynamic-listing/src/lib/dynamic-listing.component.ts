@@ -13,58 +13,58 @@ import { FormTypes } from './listingModel/formType';
 })
 export class DynamicListingComponent implements OnInit {
 
-  @ViewChild(DxDataGridComponent) myListing : DxDataGridComponent;
-  @ViewChild('popup') myPopup : any;
+  @ViewChild(DxDataGridComponent, {static: false}) myListing: DxDataGridComponent;
+  @ViewChild('popup', {static: false}) myPopup: any;
 
   @Output() onRowClicked = new EventEmitter<any>();
 
   @Output() onHrefClicked = new EventEmitter<any>();
-  
-  @Input() nameCls : string;
 
-  @Input() handlerInstantition : object;
-  
-  titleForm : string;
-  urlValidation : URL;
+  @Input() nameCls: string;
+
+  @Input() handlerInstantition: object;
+
+  titleForm: string;
+  urlValidation: URL;
   columnResize: boolean;
-  globalSearch : boolean;
-  searchRow : boolean;
-  editButton : string;
+  globalSearch: boolean;
+  searchRow: boolean;
+  editButton: string;
 
-  @Input() datas : any[] = [];
+  @Input() datas: any[] = [];
 
   @Output() displayTitle = new EventEmitter<any>();
 
-  @Input() deleteMode : boolean = false;
+  @Input() deleteMode = false;
 
-  @Input() editableMode : string = null;
-  @Input() inEditMode : boolean = false;
+  @Input() editableMode: string = null;
+  @Input() inEditMode = false;
 
-  @Input() addInEditMode : boolean = true;
+  @Input() addInEditMode = true;
 
-  @Input() formEditClassName : string = null;
+  @Input() formEditClassName: string = null;
 
-  itemsField : any[] = [];
+  itemsField: any[] = [];
 
   // ///////////items selected for deletion
   selectedItemKeys: any[] = [];
 
-  private keysClass : string[]=[];
-  template : string = "cellTemplate";
+  private keysClass: string[] = [];
+  template = 'cellTemplate';
 
   ////////////// for the form popup
-  datasForm : any[] = [];
-  @Input() colNumberForm : Number = 2;
-  @Input() nameClsFormPopup : string;
-  @Input() colNumberFormPopup : Number = 2;
-  @Input() widthFormPopup : Number = null;
+  datasForm: any[] = [];
+  @Input() colNumberForm: Number = 2;
+  @Input() nameClsFormPopup: string;
+  @Input() colNumberFormPopup: Number = 2;
+  @Input() widthFormPopup: Number = null;
   @Output() onSaveClicked = new EventEmitter<any>();
   @Output() onEditClicked = new EventEmitter<any>();
   Types = FormTypes;
   indexLastElementClicked = -1;
   elementsUpdated = false;
 
-  constructor(private listingProvider : DynamicListingService) { 
+  constructor(private listingProvider: DynamicListingService) {
     this.publishTitle = this.publishTitle.bind(this);
     this.parseClass = this.parseClass.bind(this);
     this.parseFormListing = this.parseFormListing.bind(this);
@@ -75,10 +75,10 @@ export class DynamicListingComponent implements OnInit {
     this.freeFormElements = this.freeFormElements.bind(this);
     this.getGeneratedListing = this.getGeneratedListing.bind(this);
     this.saveEditingList = this.saveEditingList.bind(this);
-    setTimeout(()=> {
+    setTimeout(() => {
       this.parseClass();
       return this.parseFormListing();
-    },0);
+    }, 0);
   }
 
   ngOnInit() {
@@ -86,10 +86,10 @@ export class DynamicListingComponent implements OnInit {
 
 
   parseClass() {
-    var classForm = new (<any>this.handlerInstantition)[this.nameCls]();
-    let  attributeAccess = classForm.__proto__;
-    let keys : string[] = this.getAttributeList(attributeAccess);
-    let idx = keys.indexOf("headers");
+    const classForm = new (this.handlerInstantition as any)[this.nameCls]();
+    const  attributeAccess = classForm.__proto__;
+    const keys: string[] = this.getAttributeList(attributeAccess);
+    const idx = keys.indexOf('headers');
     if (idx > -1) {
       this.titleForm = attributeAccess.headers.title;
       this.urlValidation = attributeAccess.headers.url;
@@ -98,23 +98,23 @@ export class DynamicListingComponent implements OnInit {
       this.editButton = attributeAccess.headers.editButton;
       // if (this.editableMode!==null && typeof (this.editableMode) == "string" && (this.editableMode=="batch" || this.editableMode == "popup" )  ) this.editButton = null;
       this.columnResize = attributeAccess.headers.resizeColomns;
-      keys.splice(idx,1);
+      keys.splice(idx, 1);
       this.publishTitle();
     }
-    keys.map(elmt=> {
-      if (!attributeAccess[elmt].value) attributeAccess[elmt].value=elmt;
-      else attributeAccess[elmt].value = attributeAccess[elmt].value.split('->').join('.');
-      return this.itemsField.push(attributeAccess[elmt])
+    keys.map(elmt => {
+      if (!attributeAccess[elmt].value) { attributeAccess[elmt].value = elmt; } else { attributeAccess[elmt].value = attributeAccess[elmt].value.split('->').join('.'); }
+      return this.itemsField.push(attributeAccess[elmt]);
     });
     console.log(this.itemsField);
     this.keysClass = keys;
-    if (this.urlValidation)
+    if (this.urlValidation) {
       this.listingProvider.getItems(this.urlValidation.toJSON()).subscribe(
         res => {
           this.datas = res as any[];
           console.log(this.datas);
         },
         err => console.log(err));
+    }
   }
 
   getAttributeList<T>(obj: T) {
@@ -127,41 +127,42 @@ export class DynamicListingComponent implements OnInit {
   }
 
   deleteSelection() {
-    this.datas = this.datas.filter(elemt => this.selectedItemKeys.indexOf(elemt)<0);
+    this.datas = this.datas.filter(elemt => this.selectedItemKeys.indexOf(elemt) < 0);
     this.myListing.instance.refresh();
     this.elementsUpdated = true;
   }
 
   publishTitle() {
-    let infos : TitleDescr = {
+    const infos: TitleDescr = {
       title : this.titleForm,
-      description : ""
-    }
+      description : ''
+    };
     this.displayTitle.emit(infos);
   }
 
   cellClicked(ev) {
     this.onRowClicked.emit(ev);
-    if (this.itemsField[ev.columnIndex].href)
-    this.onHrefClicked.emit(this.generateHrefString(this.itemsField[ev.columnIndex].href,ev.rowIndex));
+    if (this.itemsField[ev.columnIndex].href) {
+    this.onHrefClicked.emit(this.generateHrefString(this.itemsField[ev.columnIndex].href, ev.rowIndex));
+    }
   }
 
 
-  generateHrefString(href : string, rowIndex : any) {
+  generateHrefString(href: string, rowIndex: any) {
     let i = 0;
-    while (href.indexOf('{')>-1 && href.indexOf('}')>-1 && i<20) {
-      let newHref =  href.substring(href.indexOf('{')+1,href.indexOf('}'));
-      href = href.split("{"+newHref+"}").join(this.accessNestedObject(newHref,rowIndex));
+    while (href.indexOf('{') > -1 && href.indexOf('}') > -1 && i < 20) {
+      const newHref =  href.substring(href.indexOf('{') + 1, href.indexOf('}'));
+      href = href.split('{' + newHref + '}').join(this.accessNestedObject(newHref, rowIndex));
       i++;
     }
     return href;
   }
 
 
-  accessNestedObject(treeStructure : string, rowIndex : any) {
+  accessNestedObject(treeStructure: string, rowIndex: any) {
     let value = this.datas[rowIndex];
-    treeStructure.split('.').map(elmt => value= value[elmt] );
-    return value; 
+    treeStructure.split('.').map(elmt => value = value[elmt] );
+    return value;
   }
 
 
@@ -177,66 +178,65 @@ export class DynamicListingComponent implements OnInit {
   ////// FOr BAtch Edit //////////////////////////////////////////////////////////////////////
 
   rowBatchBeenUpdated(ev) {
-    if (!this.elementsUpdated) this.elementsUpdated = true;
+    if (!this.elementsUpdated) { this.elementsUpdated = true; }
   }
 
 
   /////// For Popup Edit form ///////////////////////////////////////////////////////////////////////////////
   parseFormListing() {
-    let  ii = 0; let j=0;
-  var classForm = new (<any>this.handlerInstantition)[this.nameClsFormPopup]();
-      let attributeAccess = classForm.__proto__;
-      let keys : string[] = this.getAttributeList(attributeAccess);
-      let idx = keys.indexOf("headers");
-      if (idx > -1) {
-        keys.splice(idx,1);
+    let  ii = 0; let j = 0;
+    const classForm = new (this.handlerInstantition as any)[this.nameClsFormPopup]();
+    const attributeAccess = classForm.__proto__;
+    const keys: string[] = this.getAttributeList(attributeAccess);
+    const idx = keys.indexOf('headers');
+    if (idx > -1) {
+        keys.splice(idx, 1);
       }
-      console.log(keys);
-      let formFile : FormFile = null;
-      let tabForm : FormField[] = [];
-      let lastSection : Boolean = false;
-      for (let i=0; i<keys.length;i++) {
-        let elmt = keys[i];
+    console.log(keys);
+    let formFile: FormFile = null;
+    let tabForm: FormField[] = [];
+    let lastSection: Boolean = false;
+    for (let i = 0; i < keys.length; i++) {
+        const elmt = keys[i];
         console.log(attributeAccess[elmt]);
-        if (typeof attributeAccess[elmt] == "string") {
+        if (typeof attributeAccess[elmt] == 'string') {
           console.log('SECTION');
           if (lastSection == true) {
             formFile.sectionElements = [...tabForm];
             this.datasForm.push({...formFile});
             ii++;
-            j=0;
+            j = 0;
           }
           formFile = new FormFile(attributeAccess[elmt]);
           tabForm.length = 0;
           tabForm = [];
           lastSection = true;
-          keys.splice(i,1);
+          keys.splice(i, 1);
           i--;
         } else {
           console.log('ELEMENTS');
           if (lastSection == false) {
-            formFile = new FormFile("");
+            formFile = new FormFile('');
             lastSection = true;
           }
           if (attributeAccess[elmt].type == FormTypes.SELECT) {
-            if (attributeAccess[elmt].datas.hostname == undefined)
-              if (attributeAccess[elmt].defaultValue) 
+            if (attributeAccess[elmt].datas.hostname == undefined) {
+              if (attributeAccess[elmt].defaultValue) {
                 attributeAccess[elmt].selected = attributeAccess[elmt].defaultValue;
-              else attributeAccess[elmt].selected =-1;
-            else {
-              this.setAsynDatas(attributeAccess[elmt],ii,j);
+              } else { attributeAccess[elmt].selected = -1; }
+            } else {
+              this.setAsynDatas(attributeAccess[elmt], ii, j);
             }
           }
           if (attributeAccess[elmt].type == FormTypes.CHEKBOX) {
               attributeAccess[elmt].datas.forEach(val => val.selected = false);
               attributeAccess[elmt].defaultValue && attributeAccess[elmt].defaultValue.length && attributeAccess[elmt].defaultValue.map(ind => {
-              let taille = attributeAccess[elmt].datas.length;
-              if ( ind > -1 && ind < taille ) attributeAccess[elmt].datas[ind].selected=true
+              const taille = attributeAccess[elmt].datas.length;
+              if ( ind > -1 && ind < taille ) { attributeAccess[elmt].datas[ind].selected = true; }
               });
           }
           if (attributeAccess[elmt].type == FormTypes.RADIO) {
-            if (attributeAccess[elmt].defaultValue) attributeAccess[elmt].selected = attributeAccess[elmt].datas[attributeAccess[elmt].defaultValue].value;
-            else attributeAccess[elmt].selected =0;
+            if (attributeAccess[elmt].defaultValue) { attributeAccess[elmt].selected = attributeAccess[elmt].datas[attributeAccess[elmt].defaultValue].value; } else { attributeAccess[elmt].selected = 0; }
           }
           attributeAccess[elmt].value = elmt;
           tabForm.push({...attributeAccess[elmt]});
@@ -244,50 +244,52 @@ export class DynamicListingComponent implements OnInit {
         }
         this.keysClass = keys;
       }
-      formFile.sectionElements = [...tabForm];
-      this.datasForm.push({...formFile});
-      ii++;
-      console.log(this.datasForm);
-      if (this.datasForm.length < this.colNumberForm) {
+    formFile.sectionElements = [...tabForm];
+    this.datasForm.push({...formFile});
+    ii++;
+    console.log(this.datasForm);
+    if (this.datasForm.length < this.colNumberForm) {
         this.colNumberForm = this.datasForm.length;
       }
 
-      console.log(this.datasForm);
+    console.log(this.datasForm);
   }
 
-  setAsynDatas(elmt : any, indexI : any, indexJ : any) {
+  setAsynDatas(elmt: any, indexI: any, indexJ: any) {
     elmt.customData = [];
-      this.listingProvider.getItems(elmt.datas.toJSON()).subscribe(
+    this.listingProvider.getItems(elmt.datas.toJSON()).subscribe(
         res => {
             elmt.customData = res;
             elmt.selected = elmt.defaultValue;
-            console.log(indexI+"      "+indexJ);
-          let id = setInterval(()=> {
-            if (this.datasForm[indexI]!== undefined && this.datasForm[indexI].sectionElements[indexJ]!==undefined) {
-              Object.assign(this.datasForm[indexI].sectionElements[indexJ],{...elmt});
+            console.log(indexI + '      ' + indexJ);
+            const id = setInterval(() => {
+            if (this.datasForm[indexI] !== undefined && this.datasForm[indexI].sectionElements[indexJ] !== undefined) {
+              Object.assign(this.datasForm[indexI].sectionElements[indexJ], {...elmt});
               clearInterval(id);
             }
-          },400)
+          }, 400);
         },
         err => console.log(err));
   }
 
   reajusteForm() {
-    let datas1 = [];
+    const datas1 = [];
     this.datasForm.map(elmt => {
-      let obj = {};
-      obj["sectionElements"] = [];
-      elmt.sectionElements.map(elment => obj["sectionElements"].push({...elment}));
+      const obj = {
+        sectionElements: undefined
+      };
+      obj.sectionElements = [];
+      elmt.sectionElements.map(elment => obj.sectionElements.push({...elment}));
       datas1.push(obj);
-    })
+    });
     this.datasForm.length = 0;
     this.datasForm = [...datas1];
   }
 
-  freeFormElements(){
-    for (let i =0; i < this.datasForm[0].sectionElements.length; i++) {
-      let elemntForm = this.datasForm[0].sectionElements[i];
-      switch(elemntForm.type) {
+  freeFormElements() {
+    for (let i = 0; i < this.datasForm[0].sectionElements.length; i++) {
+      const elemntForm = this.datasForm[0].sectionElements[i];
+      switch (elemntForm.type) {
         case this.Types.INPUT :
             elemntForm.defaultValue = null;
             break;
@@ -297,12 +299,12 @@ export class DynamicListingComponent implements OnInit {
         case this.Types.NUMBER_PICKER :
             elemntForm.defaultValue = null;
             break;
-        case this.Types.DATE : 
-            let currentDate = new Date();
-            let day = currentDate.getDate()
-            let month = currentDate.getMonth() + 1
-            let year = currentDate.getFullYear();
-            let date = month+"/"+day+"/"+year;
+        case this.Types.DATE :
+            const currentDate = new Date();
+            const day = currentDate.getDate();
+            const month = currentDate.getMonth() + 1;
+            const year = currentDate.getFullYear();
+            const date = month + '/' + day + '/' + year;
             elemntForm.defaultValue = date;
             break;
         case this.Types.RADIO :
@@ -318,10 +320,10 @@ export class DynamicListingComponent implements OnInit {
   editWithPopup(ev) {
     this.indexLastElementClicked = this.datas.indexOf(ev.data);
     if (this.indexLastElementClicked > -1) {
-      let realData = this.extractRealDataRow(ev.data);
-      for (let i =0; i<realData.length; i++) {
-        let elemntForm = this.datasForm[0].sectionElements[i];
-        switch(elemntForm.type) {
+      const realData = this.extractRealDataRow(ev.data);
+      for (let i = 0; i < realData.length; i++) {
+        const elemntForm = this.datasForm[0].sectionElements[i];
+        switch (elemntForm.type) {
           // c'est fait expré de ne pas avoir regroupé les 3 premier dans le défault, mathesch rohek khchine w tgoule thelebtleh ghlat
           // lol; je rigole. NON serieux je les ai laissé comme ca pour mieux comprendre c'est tous
           case this.Types.INPUT :
@@ -333,19 +335,19 @@ export class DynamicListingComponent implements OnInit {
           case this.Types.NUMBER_PICKER :
               elemntForm.defaultValue = realData[i];
               break;
-          case this.Types.DATE : 
-              let tabs = realData[i].split('/');
-              let firstElement = tabs[0];
-              tabs[0]=tabs[1]; tabs[1]=firstElement;
+          case this.Types.DATE :
+              const tabs = realData[i].split('/');
+              const firstElement = tabs[0];
+              tabs[0] = tabs[1]; tabs[1] = firstElement;
               elemntForm.defaultValue = tabs.join('/');
               break;
           case this.Types.RADIO :
-              let j = elemntForm.datas.findIndex(elmt => elmt.text == realData[i]);
+              const j = elemntForm.datas.findIndex(elmt => elmt.text == realData[i]);
               j > -1 ? elemntForm.selected = elemntForm.datas[j].value : elemntForm.selected = 0;
               break;
           case this.Types.SELECT :
-              let l = elemntForm.datas.findIndex(elmt => elmt.text == realData[i]);
-              l > -1 ? elemntForm.selected = elemntForm.datas[l].value : elemntForm.selected=-1;
+              const l = elemntForm.datas.findIndex(elmt => elmt.text == realData[i]);
+              l > -1 ? elemntForm.selected = elemntForm.datas[l].value : elemntForm.selected = -1;
               break;
         }
     }
@@ -356,28 +358,27 @@ export class DynamicListingComponent implements OnInit {
     this.freeFormElements();
   }
 
-  extractRealDataRow(data : any) {
-    let realData = [];
+  extractRealDataRow(data: any) {
+    const realData = [];
     this.itemsField.map(elt => {
       if (elt.value.indexOf('.') > -1) {
         let val = data ;
         elt.value.split('.').map(elmt => val = val[elmt]);
         realData.push(val);
-      }
-      else realData.push(data[elt.value]);
+      } else { realData.push(data[elt.value]); }
     });
     return realData;
   }
 
   putNewDatas() {
-    let rowToUpdate = this.datas[this.indexLastElementClicked];
-    for (let i =0; i < this.datasForm[0].sectionElements.length; i++) {
-      let elemntForm = this.datasForm[0].sectionElements[i];
-      switch(elemntForm.type) {
+    const rowToUpdate = this.datas[this.indexLastElementClicked];
+    for (let i = 0; i < this.datasForm[0].sectionElements.length; i++) {
+      const elemntForm = this.datasForm[0].sectionElements[i];
+      switch (elemntForm.type) {
         case this.Types.INPUT :
             if (this.itemsField[i].value.indexOf('.') > -1) {
-              let treeObject = this.itemsField[i].value.split('.');
-              let lastTreeElement = treeObject.pop();
+              const treeObject = this.itemsField[i].value.split('.');
+              const lastTreeElement = treeObject.pop();
               let val = rowToUpdate;
               treeObject.map(elmt =>  val = val[elmt]);
               val[lastTreeElement] = elemntForm.defaultValue;
@@ -387,8 +388,8 @@ export class DynamicListingComponent implements OnInit {
             break;
         case this.Types.TEXTAREA :
             if (this.itemsField[i].value.indexOf('.') > -1) {
-              let treeObject = this.itemsField[i].value.split('.');
-              let lastTreeElement = treeObject.pop();
+              const treeObject = this.itemsField[i].value.split('.');
+              const lastTreeElement = treeObject.pop();
               let val = rowToUpdate;
               treeObject.map(elmt =>  val = val[elmt]);
               val[lastTreeElement] = elemntForm.defaultValue;
@@ -398,8 +399,8 @@ export class DynamicListingComponent implements OnInit {
             break;
         case this.Types.NUMBER_PICKER :
             if (this.itemsField[i].value.indexOf('.') > -1) {
-              let treeObject = this.itemsField[i].value.split('.');
-              let lastTreeElement = treeObject.pop();
+              const treeObject = this.itemsField[i].value.split('.');
+              const lastTreeElement = treeObject.pop();
               let val = rowToUpdate;
               treeObject.map(elmt =>  val = val[elmt]);
               val[lastTreeElement] = elemntForm.defaultValue;
@@ -407,19 +408,19 @@ export class DynamicListingComponent implements OnInit {
               rowToUpdate[this.itemsField[i].value] = elemntForm.defaultValue;
             }
             break;
-        case this.Types.DATE : 
+        case this.Types.DATE :
             let valToPut = elemntForm.defaultValue;
             if (valToPut.indexOf('/') > 2 ) {
-              valToPut= valToPut.split('/').reverse().join('/');
+              valToPut = valToPut.split('/').reverse().join('/');
             } else {
-              let tabs = valToPut.split('/');
-              let firstElement = tabs[0];
-              tabs[0]=tabs[1]; tabs[1]=firstElement;
+              const tabs = valToPut.split('/');
+              const firstElement = tabs[0];
+              tabs[0] = tabs[1]; tabs[1] = firstElement;
               valToPut = tabs.join('/');
             }
             if (this.itemsField[i].value.indexOf('.') > -1) {
-              let treeObject = this.itemsField[i].value.split('.');
-              let lastTreeElement = treeObject.pop();
+              const treeObject = this.itemsField[i].value.split('.');
+              const lastTreeElement = treeObject.pop();
               let val = rowToUpdate;
               treeObject.map(elmt =>  val = val[elmt]);
               val[lastTreeElement] = valToPut;
@@ -428,12 +429,12 @@ export class DynamicListingComponent implements OnInit {
             }
             break;
         case this.Types.RADIO :
-            let index = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
+            const index = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
             if (index > -1) {
-              let valToPut1 = elemntForm.datas[index].text;
+              const valToPut1 = elemntForm.datas[index].text;
               if (this.itemsField[i].value.indexOf('.') > -1) {
-                let treeObject = this.itemsField[i].value.split('.');
-                let lastTreeElement = treeObject.pop();
+                const treeObject = this.itemsField[i].value.split('.');
+                const lastTreeElement = treeObject.pop();
                 let val = rowToUpdate;
                 treeObject.map(elmt =>  val = val[elmt]);
                 val[lastTreeElement] = valToPut1;
@@ -443,12 +444,12 @@ export class DynamicListingComponent implements OnInit {
             }
             break;
         case this.Types.SELECT :
-            let index1 = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
+            const index1 = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
             if (index1 > -1) {
-              let valToPut2 = elemntForm.datas[index1].text;
+              const valToPut2 = elemntForm.datas[index1].text;
               if (this.itemsField[i].value.indexOf('.') > -1) {
-                let treeObject = this.itemsField[i].value.split('.');
-                let lastTreeElement = treeObject.pop();
+                const treeObject = this.itemsField[i].value.split('.');
+                const lastTreeElement = treeObject.pop();
                 let val = rowToUpdate;
                 treeObject.map(elmt =>  val = val[elmt]);
                 val[lastTreeElement] = valToPut2;
@@ -464,17 +465,17 @@ export class DynamicListingComponent implements OnInit {
 
 
   putNewDatasAdd() {
-    let rowToAdd = {};
-    for (let i =0; i < this.datasForm[0].sectionElements.length; i++) {
-      let elemntForm = this.datasForm[0].sectionElements[i];
-      switch(elemntForm.type) {
+    const rowToAdd = {};
+    for (let i = 0; i < this.datasForm[0].sectionElements.length; i++) {
+      const elemntForm = this.datasForm[0].sectionElements[i];
+      switch (elemntForm.type) {
         case this.Types.INPUT :
             if (this.itemsField[i].value.indexOf('.') > -1) {
-              let treeObject = this.itemsField[i].value.split('.');
-              let lastTreeElement = treeObject.pop();
+              const treeObject = this.itemsField[i].value.split('.');
+              const lastTreeElement = treeObject.pop();
               let val = rowToAdd;
               treeObject.map(elmt =>  {
-                val[elmt]={};
+                val[elmt] = {};
                 val = val[elmt];
               });
               val[lastTreeElement] = elemntForm.defaultValue;
@@ -484,11 +485,11 @@ export class DynamicListingComponent implements OnInit {
             break;
         case this.Types.TEXTAREA :
             if (this.itemsField[i].value.indexOf('.') > -1) {
-              let treeObject = this.itemsField[i].value.split('.');
-              let lastTreeElement = treeObject.pop();
+              const treeObject = this.itemsField[i].value.split('.');
+              const lastTreeElement = treeObject.pop();
               let val = rowToAdd;
               treeObject.map(elmt =>  {
-                val[elmt]={};
+                val[elmt] = {};
                 val = val[elmt];
               });
               val[lastTreeElement] = elemntForm.defaultValue;
@@ -498,34 +499,34 @@ export class DynamicListingComponent implements OnInit {
             break;
         case this.Types.NUMBER_PICKER :
             if (this.itemsField[i].value.indexOf('.') > -1) {
-              let treeObject = this.itemsField[i].value.split('.');
-              let lastTreeElement = treeObject.pop();
+              const treeObject = this.itemsField[i].value.split('.');
+              const lastTreeElement = treeObject.pop();
               let val = rowToAdd;
               treeObject.map(elmt =>  {
-                val[elmt]={};
+                val[elmt] = {};
                 val = val[elmt];
               });
               val[lastTreeElement] = elemntForm.defaultValue;
             } else {
               rowToAdd[this.itemsField[i].value] = elemntForm.defaultValue;
             }
-        case this.Types.DATE : 
+        case this.Types.DATE :
             let valToPut = elemntForm.defaultValue;
             console.log(valToPut);
             if (valToPut.indexOf('/') > 2 ) {
-              valToPut= valToPut.split('/').reverse().join('/');
+              valToPut = valToPut.split('/').reverse().join('/');
             } else {
-              let tabs = valToPut.split('/');
-              let firstElement = tabs[0];
-              tabs[0]=tabs[1]; tabs[1]=firstElement;
+              const tabs = valToPut.split('/');
+              const firstElement = tabs[0];
+              tabs[0] = tabs[1]; tabs[1] = firstElement;
               valToPut = tabs.join('/');
             }
             if (this.itemsField[i].value.indexOf('.') > -1) {
-              let treeObject = this.itemsField[i].value.split('.');
-              let lastTreeElement = treeObject.pop();
+              const treeObject = this.itemsField[i].value.split('.');
+              const lastTreeElement = treeObject.pop();
               let val = rowToAdd;
               treeObject.map(elmt =>  {
-                val[elmt]={};
+                val[elmt] = {};
                 val = val[elmt];
               });
               val[lastTreeElement] = valToPut;
@@ -534,15 +535,15 @@ export class DynamicListingComponent implements OnInit {
             }
             break;
         case this.Types.RADIO :
-            let index = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
+            const index = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
             if (index > -1) {
-              let valToPut1 = elemntForm.datas[index].text;
+              const valToPut1 = elemntForm.datas[index].text;
               if (this.itemsField[i].value.indexOf('.') > -1) {
-                let treeObject = this.itemsField[i].value.split('.');
-                let lastTreeElement = treeObject.pop();
+                const treeObject = this.itemsField[i].value.split('.');
+                const lastTreeElement = treeObject.pop();
                 let val = rowToAdd;
                 treeObject.map(elmt =>  {
-                  val[elmt]={};
+                  val[elmt] = {};
                   val = val[elmt];
                 });
                 val[lastTreeElement] = valToPut1;
@@ -552,15 +553,15 @@ export class DynamicListingComponent implements OnInit {
             }
             break;
         case this.Types.SELECT :
-            let index1 = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
+            const index1 = elemntForm.datas.findIndex(elmt => elmt.value == elemntForm.selected);
             if (index1 > -1) {
-              let valToPut2 = elemntForm.datas[index1].text;
+              const valToPut2 = elemntForm.datas[index1].text;
               if (this.itemsField[i].value.indexOf('.') > -1) {
-                let treeObject = this.itemsField[i].value.split('.');
-                let lastTreeElement = treeObject.pop();
+                const treeObject = this.itemsField[i].value.split('.');
+                const lastTreeElement = treeObject.pop();
                 let val = rowToAdd;
                 treeObject.map(elmt =>  {
-                  val[elmt]={};
+                  val[elmt] = {};
                   val = val[elmt];
                 });
                 val[lastTreeElement] = valToPut2;
@@ -591,9 +592,9 @@ export class DynamicListingComponent implements OnInit {
     if (this.indexLastElementClicked > -1) {
       this.putNewDatas();
       this.indexLastElementClicked = -1;
-    } else this.putNewDatasAdd();
+    } else { this.putNewDatasAdd(); }
     this.reajusteForm();
-    if (!this.elementsUpdated) this.elementsUpdated = true;
+    if (!this.elementsUpdated) { this.elementsUpdated = true; }
   }
 
   cancelFormPopUp() {
@@ -603,15 +604,15 @@ export class DynamicListingComponent implements OnInit {
   }
 
 
-  setInDeleteMode(type : boolean) {
+  setInDeleteMode(type: boolean) {
     this.deleteMode = type;
   }
 
-  setInEditMode(type : boolean) {
+  setInEditMode(type: boolean) {
     this.inEditMode = type;
   }
 
-  setEditType(type : string) {
+  setEditType(type: string) {
     this.editableMode = type;
   }
 

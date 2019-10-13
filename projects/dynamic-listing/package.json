@@ -3,10 +3,10 @@
   "version": "1.2.8-u",
   "author": "adnane GUETTAF @ENAGEO",
   "peerDependencies": {
-    "@angular/common": "^7.2.0",
-    "@angular/core": "^7.2.0",
-    "devextreme": "^18.2.7",
-    "devextreme-angular": "^18.2.7"
+    "@angular/common": "~8.2.4",
+    "@angular/core": "~8.2.4",
+    "devextreme": "^19.1.6",
+    "devextreme-angular": "^19.1.6"
   },
   "dependencies": {}
 }

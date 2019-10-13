@@ -8,7 +8,7 @@ import {DynamicFormComponent} from "projects/dynamic-form/src/public-api";
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  @ViewChild(DynamicFormComponent) dynamicForm : DynamicFormComponent;
+  @ViewChild(DynamicFormComponent, {static: false}) dynamicForm : DynamicFormComponent;
 
   title = 'testLibraries';
 
