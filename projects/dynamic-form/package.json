@@ -1,12 +1,7 @@
 {
   "name": "dynamic-form",
-  "version": "1.2.8-u",
+  "version": "8.0.0",
   "author" :"adnane GUETTAF @ENAGEO",
   "peerDependencies": {
-    "@angular/common": "^7.2.0",
-    "@angular/core": "^7.2.0",
-    "devextreme": "^18.2.7",
-    "devextreme-angular": "^18.2.7",
-    "dynamic-form" : "^1.2.2"
   }
 }
