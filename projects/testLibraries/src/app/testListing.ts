@@ -3,7 +3,7 @@ import { ListingHeader, ListingDeco } from 'projects/dynamic-listing/src/public-
 
 @ListingHeader({
   title : 'test listing',
-  url : new URL('http://lab-app:82/achatR18-test/api/dossier/listeDossier?idPlan=2019'),
+  url : new URL('http://lab-app:82/achatR18-test/api/dossier?exercice=2019'),
   searchRow : true,
   resizeColomns : true,
   globalSearch : true,

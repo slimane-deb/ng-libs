@@ -10,10 +10,10 @@
     "e2e": "ng e2e",
     "dynamic-form-build": "ng build dynamic-form",
     "dynamic-form-publish": "cd dist/dynamic-form && npm publish --registry http://localhost:4873",
+    "dynamic-form-publish-enageo": "cd dist/dynamic-form && npm publish --registry http://192.168.100.150/nexus/repository/npm-release/",
     "dynamic-listing-build": "ng build dynamicListing",
     "dynamic-listing-publish": "cd dist/dynamic-listing && npm publish --registry http://localhost:4873",
-    "dynamic-listing-publish-enageo": "cd dist/dynamic-listing && npm publish --registry http://192.168.100.150/nexus/repository/npm-release/",
-    "dynamic-form-publish-enageo": "cd dist/dynamic-form && npm publish --registry http://192.168.100.150/nexus/repository/npm-release/"
+    "dynamic-listing-publish-enageo": "cd dist/dynamic-listing && npm publish --registry http://192.168.100.150/nexus/repository/npm-release/"
   },
   "private": true,
   "dependencies": {

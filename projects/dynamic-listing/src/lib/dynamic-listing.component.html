@@ -1,7 +1,7 @@
 <div style="display: flex; flex-direction: row-reverse; height: auto;" >
   <dx-button *ngIf = "editButton != null && !inEditMode"
     text="edit"
-    (onClick)="globalEdit()"
+    (onClick)="globalEdit($event, grid)"
     style="margin: 5px 10px; margin-left: 5px; text-transform: uppercase"
   >
   </dx-button>
@@ -25,7 +25,7 @@
 </div>
 
 
-<dx-data-grid
+<dx-data-grid #grid
   [dataSource]="datas"
   [allowColumnResizing]="columnResize"
   [hoverStateEnabled]="true"

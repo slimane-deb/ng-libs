@@ -238,9 +238,12 @@ export class DynamicListingComponent implements OnInit {
   ////// Fo form Editing mode//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-  globalEdit() {
+  globalEdit(e: any, grid: any) {
     // this.inEditMode = true;
     this.onEditClicked.emit();
+    grid.instance.addRow();
+      // console.log(grid.myListing);
+      // console.log(this.dynamicListing);
   }
 
   initiateEditMode() {
